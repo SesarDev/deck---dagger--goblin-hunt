@@ -1,0 +1,128 @@
+[gd_scene load_steps=2 format=3 uid="uid://brhkyq5t68o74"]
+
+[ext_resource type="Script" uid="uid://blgs12kgmfucs" path="res://src/ui/admin/AdminEnemies.gd" id="1_npi56"]
+
+[node name="AdminEnemies" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_npi56")
+
+[node name="VBoxRoot" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Header" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="VBoxRoot/Header"]
+layout_mode = 2
+text = "Admin Enemigos"
+
+[node name="BtnBack" type="Button" parent="VBoxRoot/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Volver"
+
+[node name="Body" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="LeftPanel" type="Panel" parent="VBoxRoot/Body"]
+custom_minimum_size = Vector2(420, 520)
+layout_mode = 2
+
+[node name="VBoxLeft" type="VBoxContainer" parent="VBoxRoot/Body/LeftPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SearchEdit" type="LineEdit" parent="VBoxRoot/Body/LeftPanel/VBoxLeft"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="EnemiesList" type="ItemList" parent="VBoxRoot/Body/LeftPanel/VBoxLeft"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxLeftBtns" type="HBoxContainer" parent="VBoxRoot/Body/LeftPanel/VBoxLeft"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="BtnNew" type="Button" parent="VBoxRoot/Body/LeftPanel/VBoxLeft/HBoxLeftBtns"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Nueva Carta"
+
+[node name="BtnDelete" type="Button" parent="VBoxRoot/Body/LeftPanel/VBoxLeft/HBoxLeftBtns"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Borrar Carta"
+
+[node name="RightPanel" type="Panel" parent="VBoxRoot/Body"]
+custom_minimum_size = Vector2(520, 620)
+layout_mode = 2
+
+[node name="VBoxForm" type="VBoxContainer" parent="VBoxRoot/Body/RightPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="FormTitle" type="Label" parent="VBoxRoot/Body/RightPanel/VBoxForm"]
+layout_mode = 2
+text = "Información Enemigo"
+
+[node name="NameEdit" type="LineEdit" parent="VBoxRoot/Body/RightPanel/VBoxForm"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Nombre del enemigo"
+
+[node name="HpSpin" type="SpinBox" parent="VBoxRoot/Body/RightPanel/VBoxForm"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DmgSpin" type="SpinBox" parent="VBoxRoot/Body/RightPanel/VBoxForm"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="TypeOption" type="OptionButton" parent="VBoxRoot/Body/RightPanel/VBoxForm"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DescEdit" type="TextEdit" parent="VBoxRoot/Body/RightPanel/VBoxForm"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Texto descriptivo"
+
+[node name="HBoxFormBtns" type="HBoxContainer" parent="VBoxRoot/Body/RightPanel/VBoxForm"]
+layout_mode = 2
+
+[node name="BtnSave" type="Button" parent="VBoxRoot/Body/RightPanel/VBoxForm/HBoxFormBtns"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Guardar"
+
+[node name="BtnReset" type="Button" parent="VBoxRoot/Body/RightPanel/VBoxForm/HBoxFormBtns"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reset"

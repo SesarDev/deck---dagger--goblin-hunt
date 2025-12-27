@@ -1,0 +1,154 @@
+[gd_scene load_steps=4 format=3 uid="uid://dxse0x6urk2pj"]
+
+[ext_resource type="Theme" uid="uid://vvgre7h62n12" path="res://src/ui/common/DeckTheme.tres" id="1_r7md3"]
+[ext_resource type="PackedScene" uid="uid://dsfwrr8geg2vx" path="res://src/ui/common/CardView.tscn" id="2_74lw3"]
+[ext_resource type="Script" uid="uid://rs2ovpusnb6y" path="res://src/data/repositories/repo_test.gd" id="2_txe4k"]
+
+[node name="CombatScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_r7md3")
+script = ExtResource("2_txe4k")
+
+[node name="Fondo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.007856007, 0.1238732, 0.080836855, 1)
+
+[node name="VBoxRoot" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="HBoxHUD" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="PlayerPanel" type="Panel" parent="VBoxRoot/HBoxHUD"]
+custom_minimum_size = Vector2(400, 120)
+layout_mode = 2
+
+[node name="VBoxPlayer" type="VBoxContainer" parent="VBoxRoot/HBoxHUD/PlayerPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="PlayerName" type="Label" parent="VBoxRoot/HBoxHUD/PlayerPanel/VBoxPlayer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Juagdor"
+horizontal_alignment = 1
+
+[node name="PlayerHP" type="Label" parent="VBoxRoot/HBoxHUD/PlayerPanel/VBoxPlayer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "HP: 50/50"
+horizontal_alignment = 1
+
+[node name="PlayerEnergy" type="Label" parent="VBoxRoot/HBoxHUD/PlayerPanel/VBoxPlayer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Energía: 3"
+horizontal_alignment = 1
+
+[node name="EnemyPanel" type="Panel" parent="VBoxRoot/HBoxHUD"]
+custom_minimum_size = Vector2(400, 120)
+layout_mode = 2
+
+[node name="VBoxEnemy" type="VBoxContainer" parent="VBoxRoot/HBoxHUD/EnemyPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="EnemyName" type="Label" parent="VBoxRoot/HBoxHUD/EnemyPanel/VBoxEnemy"]
+layout_mode = 2
+text = "Goblin saqueador"
+horizontal_alignment = 1
+
+[node name="EnemyHP" type="Label" parent="VBoxRoot/HBoxHUD/EnemyPanel/VBoxEnemy"]
+layout_mode = 2
+text = "HP: 35/35"
+horizontal_alignment = 1
+
+[node name="EnemyIntent" type="Label" parent="VBoxRoot/HBoxHUD/EnemyPanel/VBoxEnemy"]
+layout_mode = 2
+text = "Intención: Atacar (8 daño)"
+horizontal_alignment = 1
+
+[node name="Battlefield" type="Panel" parent="VBoxRoot"]
+custom_minimum_size = Vector2(800, 220)
+layout_mode = 2
+
+[node name="BattlefieldLabel" type="Label" parent="VBoxRoot/Battlefield"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Aquí ira el enemigo y animaciones ene l futuro"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxHand" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Card_1" parent="VBoxRoot/HBoxHand" instance=ExtResource("2_74lw3")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Card_2" parent="VBoxRoot/HBoxHand" instance=ExtResource("2_74lw3")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Card_3" parent="VBoxRoot/HBoxHand" instance=ExtResource("2_74lw3")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Card_4" parent="VBoxRoot/HBoxHand" instance=ExtResource("2_74lw3")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Card_5" parent="VBoxRoot/HBoxHand" instance=ExtResource("2_74lw3")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxActions" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="BtnEndTurn" type="Button" parent="VBoxRoot/HBoxActions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fin de turno"
+
+[node name="BtnBackToMap" type="Button" parent="VBoxRoot/HBoxActions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Volver al mapa"

@@ -11,5 +11,20 @@ config_version=5
 [application]
 
 config/name="Deck & Dagger: Goblin Hunt"
+run/main_scene="uid://dfyslmyeyvlkc"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Database="*res://src/core/database/database_service.gd"
+
+[display]
+
+window/size/viewport_width=1366
+window/size/viewport_height=768
+window/stretch/mode="viewport"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg")

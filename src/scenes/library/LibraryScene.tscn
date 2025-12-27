@@ -1,0 +1,170 @@
+[gd_scene load_steps=3 format=3 uid="uid://lyx5g4behti4"]
+
+[ext_resource type="Theme" uid="uid://vvgre7h62n12" path="res://src/ui/common/DeckTheme.tres" id="1_l50le"]
+[ext_resource type="Script" uid="uid://c4xpq25nlb275" path="res://src/ui/library/LibraryScene.gd" id="2_gomvg"]
+
+[node name="LibraryScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_l50le")
+script = ExtResource("2_gomvg")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.013946071, 0.10491923, 0.06544114, 1)
+
+[node name="VBoxRoot" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="VBoxRoot/Header"]
+layout_mode = 2
+text = "Biblioteca de Cartas"
+
+[node name="BtnBack" type="Button" parent="VBoxRoot/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Volver"
+
+[node name="FiltersPanel" type="Panel" parent="VBoxRoot"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+
+[node name="FiltersHBox" type="HBoxContainer" parent="VBoxRoot/FiltersPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="SearchEdit" type="LineEdit" parent="VBoxRoot/FiltersPanel/FiltersHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Buscar carta..."
+
+[node name="TypeFilter" type="OptionButton" parent="VBoxRoot/FiltersPanel/FiltersHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RarityFilter" type="OptionButton" parent="VBoxRoot/FiltersPanel/FiltersHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CostFilter" type="OptionButton" parent="VBoxRoot/FiltersPanel/FiltersHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BtnClearFilters" type="Button" parent="VBoxRoot/FiltersPanel/FiltersHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Limpiar"
+
+[node name="Body" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="CardsPanel" type="Panel" parent="VBoxRoot/Body"]
+custom_minimum_size = Vector2(820, 480)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxRoot/Body/CardsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ScrollCards" type="ScrollContainer" parent="VBoxRoot/Body/CardsPanel/MarginContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxRoot/Body/CardsPanel/MarginContainer/ScrollCards"]
+layout_mode = 2
+
+[node name="GridCards" type="GridContainer" parent="VBoxRoot/Body/CardsPanel/MarginContainer/ScrollCards/CenterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 3
+
+[node name="DetailsPanel" type="Panel" parent="VBoxRoot/Body"]
+custom_minimum_size = Vector2(420, 480)
+layout_mode = 2
+
+[node name="VBoxDetail" type="VBoxContainer" parent="VBoxRoot/Body/DetailsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="DetailTitle" type="Label" parent="VBoxRoot/Body/DetailsPanel/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Detalle"
+
+[node name="DetailName" type="Label" parent="VBoxRoot/Body/DetailsPanel/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Selecciona una carta"
+
+[node name="DetailType" type="Label" parent="VBoxRoot/Body/DetailsPanel/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DetailCost" type="Label" parent="VBoxRoot/Body/DetailsPanel/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DetailRarity" type="Label" parent="VBoxRoot/Body/DetailsPanel/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DetailDesc" type="RichTextLabel" parent="VBoxRoot/Body/DetailsPanel/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DetailExtra" type="Label" parent="VBoxRoot/Body/DetailsPanel/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Bottom" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxRoot/Bottom"]
+layout_mode = 2
+text = "Total cartas: X"

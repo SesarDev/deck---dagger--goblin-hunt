@@ -1,0 +1,104 @@
+[gd_scene load_steps=3 format=3 uid="uid://3wuefs6ga0o7"]
+
+[ext_resource type="Theme" uid="uid://vvgre7h62n12" path="res://src/ui/common/DeckTheme.tres" id="1_v56i3"]
+[ext_resource type="Script" uid="uid://d1h0vhuqxyscj" path="res://src/ui/events/EventScene.gd" id="2_jvm08"]
+
+[node name="EventScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_v56i3")
+script = ExtResource("2_jvm08")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06529676, 0.21088612, 0.10595352, 1)
+
+[node name="Center" type="CenterContainer" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelEvent" type="Panel" parent="ColorRect/Center"]
+custom_minimum_size = Vector2(850, 520)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="ColorRect/Center/PanelEvent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="EventTitle" type="Label" parent="ColorRect/Center/PanelEvent/VBox"]
+layout_mode = 2
+text = "Aldea Goblin en Ruinas"
+horizontal_alignment = 1
+
+[node name="EventBody" type="RichTextLabel" parent="ColorRect/Center/PanelEvent/VBox"]
+layout_mode = 2
+text = "Entre los árboles encuentras una empalizada de madera oscura.
+Huele a humo y a hierro. Un goblin herido te observa desde la sombra…
+"
+fit_content = true
+
+[node name="OptionsVBox" type="VBoxContainer" parent="ColorRect/Center/PanelEvent/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BtnOption1" type="Button" parent="ColorRect/Center/PanelEvent/VBox/OptionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Ayudar al goblin (Recibes una carta)"
+
+[node name="BtnOption2" type="Button" parent="ColorRect/Center/PanelEvent/VBox/OptionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Robar suministros (Ganas oro, pierdes HP)"
+
+[node name="BtnOption3" type="Button" parent="ColorRect/Center/PanelEvent/VBox/OptionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Ignorar y seguir (Nada ocurre)"
+
+[node name="ResultPanel" type="Panel" parent="ColorRect/Center/PanelEvent/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="ResultLabel" type="Label" parent="ColorRect/Center/PanelEvent/VBox/ResultPanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Resultado aquí..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HBoxBottom" type="HBoxContainer" parent="ColorRect/Center/PanelEvent/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="BtnContinue" type="Button" parent="ColorRect/Center/PanelEvent/VBox/HBoxBottom"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+disabled = true
+text = "Continuar"

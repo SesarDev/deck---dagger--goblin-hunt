@@ -1,0 +1,127 @@
+[gd_scene load_steps=3 format=3 uid="uid://btfrky4nluj8x"]
+
+[ext_resource type="Theme" uid="uid://vvgre7h62n12" path="res://src/ui/common/DeckTheme.tres" id="1_ttirr"]
+[ext_resource type="Script" uid="uid://dmtoxcr84xsji" path="res://src/ui/options/OptionsScene.gd" id="2_s4rg6"]
+
+[node name="OptionsScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_ttirr")
+script = ExtResource("2_s4rg6")
+
+[node name="Fondo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.016369678, 0.17954245, 0.11408614, 1)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelOptions" type="Panel" parent="Center"]
+custom_minimum_size = Vector2(800, 520)
+layout_mode = 2
+
+[node name="VBoxRoot" type="VBoxContainer" parent="Center/PanelOptions"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="Center/PanelOptions/VBoxRoot"]
+layout_mode = 2
+text = "Opciones"
+horizontal_alignment = 1
+
+[node name="AudioPanel" type="Panel" parent="Center/PanelOptions/VBoxRoot"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Center/PanelOptions/VBoxRoot/AudioPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxAudio" type="VBoxContainer" parent="Center/PanelOptions/VBoxRoot/AudioPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LabelMusic" type="Label" parent="Center/PanelOptions/VBoxRoot/AudioPanel/MarginContainer/VBoxAudio"]
+layout_mode = 2
+text = "Música"
+
+[node name="MusicSlider" type="HSlider" parent="Center/PanelOptions/VBoxRoot/AudioPanel/MarginContainer/VBoxAudio"]
+unique_name_in_owner = true
+layout_mode = 2
+value = 70.0
+
+[node name="LabelSfx" type="Label" parent="Center/PanelOptions/VBoxRoot/AudioPanel/MarginContainer/VBoxAudio"]
+layout_mode = 2
+text = "Efectos"
+
+[node name="SfxSlider" type="HSlider" parent="Center/PanelOptions/VBoxRoot/AudioPanel/MarginContainer/VBoxAudio"]
+unique_name_in_owner = true
+layout_mode = 2
+value = 60.0
+
+[node name="ScreenPanel" type="Panel" parent="Center/PanelOptions/VBoxRoot"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Center/PanelOptions/VBoxRoot/ScreenPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxScreen" type="VBoxContainer" parent="Center/PanelOptions/VBoxRoot/ScreenPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="FullscreenCheck" type="CheckBox" parent="Center/PanelOptions/VBoxRoot/ScreenPanel/MarginContainer/VBoxScreen"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pantalla Completa"
+
+[node name="VsyncCheck" type="CheckBox" parent="Center/PanelOptions/VBoxRoot/ScreenPanel/MarginContainer/VBoxScreen"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "VSync"
+
+[node name="Buttom" type="HBoxContainer" parent="Center/PanelOptions/VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="BtnBack" type="Button" parent="Center/PanelOptions/VBoxRoot/Buttom"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Volver"

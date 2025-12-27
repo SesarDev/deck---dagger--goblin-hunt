@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://e4v30opiuvbs"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hcrc6"]
+bg_color = Color(0.2901961, 0.18431373, 0.10980392, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.17254902, 0.105882354, 0.0627451, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[node name="MapNode" type="Button"]
+custom_minimum_size = Vector2(60, 60)
+theme_type_variation = &"FlatButton"
+theme_override_styles/normal = SubResource("StyleBoxFlat_hcrc6")

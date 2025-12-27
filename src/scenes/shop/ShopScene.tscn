@@ -1,0 +1,144 @@
+[gd_scene load_steps=4 format=3 uid="uid://ggbuvm0y8han"]
+
+[ext_resource type="Theme" uid="uid://vvgre7h62n12" path="res://src/ui/common/DeckTheme.tres" id="1_b7m8w"]
+[ext_resource type="Script" uid="uid://2416d0fdgvfl" path="res://src/ui/shop/ShopScene.gd" id="2_7hq8v"]
+[ext_resource type="PackedScene" uid="uid://dsfwrr8geg2vx" path="res://src/ui/common/CardView.tscn" id="3_53k2t"]
+
+[node name="ShopScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_b7m8w")
+script = ExtResource("2_7hq8v")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.011046531, 0.10210238, 0.047414288, 1)
+
+[node name="VBoxRoot" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Header" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="ShopTitle" type="Label" parent="VBoxRoot/Header"]
+layout_mode = 2
+text = "Tienda Goblin"
+
+[node name="GoldLabel" type="Label" parent="VBoxRoot/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Oro: 120"
+
+[node name="HBoxBody" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="ShopListPanel" type="Panel" parent="VBoxRoot/HBoxBody"]
+custom_minimum_size = Vector2(520, 420)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxRoot/HBoxBody/ShopListPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="HBoxShopList" type="HBoxContainer" parent="VBoxRoot/HBoxBody/ShopListPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="ShopCard_1" parent="VBoxRoot/HBoxBody/ShopListPanel/MarginContainer/HBoxShopList" instance=ExtResource("3_53k2t")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="ShopCard_2" parent="VBoxRoot/HBoxBody/ShopListPanel/MarginContainer/HBoxShopList" instance=ExtResource("3_53k2t")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ShopCard_3" parent="VBoxRoot/HBoxBody/ShopListPanel/MarginContainer/HBoxShopList" instance=ExtResource("3_53k2t")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DetailPanel" type="Panel" parent="VBoxRoot/HBoxBody"]
+custom_minimum_size = Vector2(520, 420)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxRoot/HBoxBody/DetailPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxDetail" type="VBoxContainer" parent="VBoxRoot/HBoxBody/DetailPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="DetailTitle" type="Label" parent="VBoxRoot/HBoxBody/DetailPanel/MarginContainer/VBoxDetail"]
+layout_mode = 2
+text = "Detalle"
+
+[node name="DetailName" type="Label" parent="VBoxRoot/HBoxBody/DetailPanel/MarginContainer/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Selecciona una carta"
+
+[node name="DetailCost" type="Label" parent="VBoxRoot/HBoxBody/DetailPanel/MarginContainer/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DetailDesc" type="RichTextLabel" parent="VBoxRoot/HBoxBody/DetailPanel/MarginContainer/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DetailPrice" type="Label" parent="VBoxRoot/HBoxBody/DetailPanel/MarginContainer/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxBottom" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="BtnBackToMap" type="Button" parent="VBoxRoot/HBoxBottom"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Volver al mapa
+"
+
+[node name="BtnBuy" type="Button" parent="VBoxRoot/HBoxBottom"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Comprar"

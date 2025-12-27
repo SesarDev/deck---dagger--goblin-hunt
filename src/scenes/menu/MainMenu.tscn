@@ -1,0 +1,98 @@
+[gd_scene load_steps=3 format=3 uid="uid://dlo3d3748iur8"]
+
+[ext_resource type="Theme" uid="uid://vvgre7h62n12" path="res://src/ui/common/DeckTheme.tres" id="1_6jxyh"]
+[ext_resource type="Script" uid="uid://cubwxgltmpad7" path="res://src/ui/menu/MainMenu.gd" id="2_da4wq"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_6jxyh")
+script = ExtResource("2_da4wq")
+
+[node name="Fondo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05882353, 0.22745098, 0.11764706, 1)
+
+[node name="PanelMenu" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(600, 400)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelFondo" type="Panel" parent="PanelMenu"]
+layout_mode = 2
+
+[node name="VBoxContenido" type="VBoxContainer" parent="PanelMenu/PanelFondo"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TituloJuego" type="Label" parent="PanelMenu/PanelFondo/VBoxContenido"]
+layout_mode = 2
+text = "Deck & Dagger: Goblin Hunt"
+horizontal_alignment = 1
+
+[node name="VBoxBotones" type="VBoxContainer" parent="PanelMenu/PanelFondo/VBoxContenido"]
+layout_mode = 2
+alignment = 1
+
+[node name="BtnJugar" type="Button" parent="PanelMenu/PanelFondo/VBoxContenido/VBoxBotones"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Jugar"
+
+[node name="BtnBiblioteca" type="Button" parent="PanelMenu/PanelFondo/VBoxContenido/VBoxBotones"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Biblioteca de cartas"
+
+[node name="BtnLogros" type="Button" parent="PanelMenu/PanelFondo/VBoxContenido/VBoxBotones"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Logros"
+
+[node name="BtnOpciones" type="Button" parent="PanelMenu/PanelFondo/VBoxContenido/VBoxBotones"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Opciones
+"
+
+[node name="BtnProfile" type="Button" parent="PanelMenu/PanelFondo/VBoxContenido/VBoxBotones"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Perfil"
+
+[node name="BtnSalir" type="Button" parent="PanelMenu/PanelFondo/VBoxContenido/VBoxBotones"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Salir"
+
+[node name="LabelVersion" type="Label" parent="PanelMenu/PanelFondo/VBoxContenido"]
+layout_mode = 2
+text = "v0.1 - Prototipo UI"
+horizontal_alignment = 1

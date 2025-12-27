@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3 uid="uid://cuuh7dyrt7vi4"]
+
+[ext_resource type="Script" uid="uid://cbtxhomdmcki1" path="res://src/ui/achievements/AchievementItem.gd" id="1_kd5m7"]
+
+[node name="AchievementItem" type="Button"]
+custom_minimum_size = Vector2(0, 90)
+anchors_preset = -1
+size_flags_horizontal = 3
+size_flags_vertical = 0
+script = ExtResource("1_kd5m7")
+
+[node name="HBox" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="StatusDot" type="ColorRect" parent="HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+color = Color(1.973361e-06, 0.6386914, 0.030892048, 1)
+
+[node name="Texts" type="VBoxContainer" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="AchName" type="Label" parent="HBox/Texts"]
+unique_name_in_owner = true
+layout_mode = 2
+vertical_alignment = 1
+
+[node name="AchShort" type="Label" parent="HBox/Texts"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 2
+
+[node name="AchState" type="Label" parent="HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Completado"
+horizontal_alignment = 2
+vertical_alignment = 1

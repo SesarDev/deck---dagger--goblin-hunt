@@ -1,0 +1,196 @@
+[gd_scene load_steps=3 format=3 uid="uid://8xflb1ve8k4b"]
+
+[ext_resource type="Theme" uid="uid://vvgre7h62n12" path="res://src/ui/common/DeckTheme.tres" id="1_xpjf5"]
+[ext_resource type="Script" uid="uid://jrbf0j6plidy" path="res://src/ui/achievements/AchievementsScene.gd" id="2_ooafd"]
+
+[node name="AchievementsScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_xpjf5")
+script = ExtResource("2_ooafd")
+
+[node name="Fondo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.009994988, 0.1327959, 0.08252791, 1)
+
+[node name="VBoxRoot" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Header" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="VBoxRoot/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 42
+text = "Logros y progreso"
+
+[node name="BtnBack" type="Button" parent="VBoxRoot/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Volver
+"
+
+[node name="ProgressPanel" type="Panel" parent="VBoxRoot"]
+custom_minimum_size = Vector2(1100, 140)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="ProgressHBox" type="HBoxContainer" parent="VBoxRoot/ProgressPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="CardRun" type="Panel" parent="VBoxRoot/ProgressPanel/ProgressHBox"]
+custom_minimum_size = Vector2(300, 90)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxRoot/ProgressPanel/ProgressHBox/CardRun"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="RunTitle" type="Label" parent="VBoxRoot/ProgressPanel/ProgressHBox/CardRun/VBoxContainer"]
+layout_mode = 2
+text = "Run actual"
+horizontal_alignment = 1
+
+[node name="RunValue" type="Label" parent="VBoxRoot/ProgressPanel/ProgressHBox/CardRun/VBoxContainer"]
+layout_mode = 2
+text = "Bosque: Piso 3"
+horizontal_alignment = 1
+
+[node name="CardStats" type="Panel" parent="VBoxRoot/ProgressPanel/ProgressHBox"]
+custom_minimum_size = Vector2(300, 90)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxRoot/ProgressPanel/ProgressHBox/CardStats"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="StatsTitle" type="Label" parent="VBoxRoot/ProgressPanel/ProgressHBox/CardStats/VBoxContainer"]
+layout_mode = 2
+text = "Estadísticas"
+horizontal_alignment = 1
+
+[node name="StatsValue" type="Label" parent="VBoxRoot/ProgressPanel/ProgressHBox/CardStats/VBoxContainer"]
+layout_mode = 2
+text = "Victorias: 2 | Derrotas: 5"
+horizontal_alignment = 1
+
+[node name="CardCompletion" type="Panel" parent="VBoxRoot/ProgressPanel/ProgressHBox"]
+custom_minimum_size = Vector2(300, 90)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxRoot/ProgressPanel/ProgressHBox/CardCompletion"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="CompletionTitle" type="Label" parent="VBoxRoot/ProgressPanel/ProgressHBox/CardCompletion/VBoxContainer"]
+layout_mode = 2
+text = "Completado"
+horizontal_alignment = 1
+
+[node name="CompletionValue" type="Label" parent="VBoxRoot/ProgressPanel/ProgressHBox/CardCompletion/VBoxContainer"]
+layout_mode = 2
+text = "Logros 3/12 (25%)"
+horizontal_alignment = 1
+
+[node name="Body" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="AchievementsPanel" type="Panel" parent="VBoxRoot/Body"]
+custom_minimum_size = Vector2(820, 420)
+layout_mode = 2
+
+[node name="Scroll" type="ScrollContainer" parent="VBoxRoot/Body/AchievementsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ListVBox" type="VBoxContainer" parent="VBoxRoot/Body/AchievementsPanel/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="DetailPanel" type="Panel" parent="VBoxRoot/Body"]
+custom_minimum_size = Vector2(420, 420)
+layout_mode = 2
+
+[node name="VBoxDetail" type="VBoxContainer" parent="VBoxRoot/Body/DetailPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="DetailTitle" type="Label" parent="VBoxRoot/Body/DetailPanel/VBoxDetail"]
+layout_mode = 2
+text = "Detalle"
+
+[node name="DetailName" type="Label" parent="VBoxRoot/Body/DetailPanel/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Selecciona un logro"
+
+[node name="DetailDesc" type="RichTextLabel" parent="VBoxRoot/Body/DetailPanel/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DetailStatus" type="Label" parent="VBoxRoot/Body/DetailPanel/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DetailReward" type="Label" parent="VBoxRoot/Body/DetailPanel/VBoxDetail"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Bottom" type="HBoxContainer" parent="VBoxRoot"]
+layout_mode = 2
