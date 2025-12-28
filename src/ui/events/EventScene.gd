@@ -21,6 +21,7 @@ func _ready() -> void:
 	btn_option2.pressed.connect(func(): _choose_option(2))
 	btn_option3.pressed.connect(func(): _choose_option(3))
 	btn_continue.pressed.connect(_back_to_map)
+	print(Database.query("SELECT nivel, experiencia FROM progreso_usuario WHERE id_usuario = 1;"))
 
 func _choose_option(i: int) -> void:
 	if chosen:

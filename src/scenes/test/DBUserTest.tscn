@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://beoe184mobp1p"]
-
-[ext_resource type="Script" uid="uid://ba7ce5l0fklnb" path="res://src/scenes/test/DBUserTest.gd" id="1_31ryq"]
-
-[node name="DbUserTest" type="Node"]
-script = ExtResource("1_31ryq")

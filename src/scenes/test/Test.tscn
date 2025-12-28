@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://bcqg5sjsswe7l"]
+
+[node name="Test" type="Control"]
+layout_mode = 3
+anchors_preset = 0

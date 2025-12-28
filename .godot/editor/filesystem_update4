@@ -1,0 +1,6 @@
+res://src/ui/common/DeckTheme.tres
+res://src/ui/admin/AdminLogin.gd
+res://src/ui/admin/AdminPanel.gd
+res://src/core/database/database_service.gd
+res://src/scenes/admin/AdminLogin.tscn
+res://src/ui/menu/MainMenu.gd

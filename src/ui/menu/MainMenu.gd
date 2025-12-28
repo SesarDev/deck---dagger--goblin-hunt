@@ -15,6 +15,20 @@ func _ready() -> void:
 	btn_opciones.pressed.connect(_on_btn_opciones_pressed)
 	btn_salir.pressed.connect(_on_btn_salir_pressed)
 	btn_profile.pressed.connect(_on_profile_pressed)
+	ProgressionService.new().refresh_all_unlocks(1)
+	
+	print(Database.query("SELECT COUNT(*) AS n FROM carta;"))
+	print(Database.query("SELECT COUNT(*) AS n FROM logro;"))
+	print(Database.query("SELECT tipo, COUNT(*) AS n FROM carta_desbloqueo GROUP BY tipo ORDER BY tipo;"))
+	print(Database.query("""
+	SELECT COUNT(*) AS n
+	FROM usuario_carta
+	WHERE id_usuario = 1 AND desbloqueada = 1;
+"""))
+
+
+
+
 
 func _on_btn_jugar_pressed() -> void:
 	print("Jugar: ir a mapa/camino")

@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://vvgre7h62n12" path="res://src/ui/common/DeckTheme.tres" id="1_r7md3"]
 [ext_resource type="PackedScene" uid="uid://dsfwrr8geg2vx" path="res://src/ui/common/CardView.tscn" id="2_74lw3"]
-[ext_resource type="Script" uid="uid://rs2ovpusnb6y" path="res://src/data/repositories/repo_test.gd" id="2_txe4k"]
+[ext_resource type="Script" uid="uid://d14u7donaepr4" path="res://src/ui/combat/CombatScene.gd" id="2_txe4k"]
 
 [node name="CombatScene" type="Control"]
 layout_mode = 3

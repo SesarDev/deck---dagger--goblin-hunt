@@ -1,9 +1,8 @@
+res://src/scenes/menu
 res://src/scenes/admin
 res://src/scenes/combat
 res://src/core/database
-res://src/scenes/menu
 res://src/ui/common
 res://src
 res://src/scenes
 res://src/core
-res://src/database
