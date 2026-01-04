@@ -85,7 +85,9 @@ func apply_migrations() -> void:
 	"res://data/db/migrations/001_carta_desbloqueo.sql",
 	"res://data/db/migrations/002_seed_unlock_rules.sql",
 	"res://data/db/migrations/003_reseed_cards_and_achievements.sql",
+	"res://data/db/migrations/004_add_enemy_type.sql",
 	]
+
 
 
 

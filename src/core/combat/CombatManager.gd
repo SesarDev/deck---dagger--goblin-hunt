@@ -10,9 +10,15 @@ var enemy_repo := EnemyRepository.new()
 var player := PlayerCombatState.new()
 var enemy := EnemyCombatState.new()
 
+var achievement_service := AchievementService.new()
+var _player_hp_at_start: int = 0
+
+
 func start_combat(enemy_id: int = -1) -> void:
 	# 1) Cargar enemigo desde BD
 	var enemy_row: Dictionary
+	_player_hp_at_start = player.hp
+
 	if enemy_id == -1:
 		var enemies := enemy_repo.get_all()
 		enemy_row = enemies[randi() % enemies.size()]
@@ -135,6 +141,9 @@ func _shuffle(arr: Array) -> void:
 func _check_end_conditions() -> void:
 	if enemy.hp <= 0:
 		_on_victory()
+		var damage_taken: int = maxi(0, _player_hp_at_start - player.hp)
+		var unlocked := achievement_service.on_combat_ended(1, true, enemy.tipo, damage_taken)
+
 		combat_ended.emit(true, enemy.recompensa_xp, enemy.name)
 	elif player.hp <= 0:
 		combat_ended.emit(false, 0, enemy.name)

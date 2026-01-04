@@ -4,3 +4,7 @@ res://src/ui/admin/AdminPanel.gd
 res://src/core/database/database_service.gd
 res://src/scenes/admin/AdminLogin.tscn
 res://src/ui/menu/MainMenu.gd
+res://src/data/repositories/enemy_repository.gd
+res://src/core/combat/EnemyCombatState.gd
+res://src/core/achievements/achievements_service.gd
+res://src/core/combat/CombatManager.gd

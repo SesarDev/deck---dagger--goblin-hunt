@@ -17,14 +17,9 @@ func _ready() -> void:
 	btn_profile.pressed.connect(_on_profile_pressed)
 	ProgressionService.new().refresh_all_unlocks(1)
 	
-	print(Database.query("SELECT COUNT(*) AS n FROM carta;"))
-	print(Database.query("SELECT COUNT(*) AS n FROM logro;"))
-	print(Database.query("SELECT tipo, COUNT(*) AS n FROM carta_desbloqueo GROUP BY tipo ORDER BY tipo;"))
-	print(Database.query("""
-	SELECT COUNT(*) AS n
-	FROM usuario_carta
-	WHERE id_usuario = 1 AND desbloqueada = 1;
-"""))
+	print(Database.query("SELECT id_enemigo, nombre, vida_base, dano_base, recompensa_xp, tipo FROM enemigo ORDER BY id_enemigo;"))
+
+
 
 
 
