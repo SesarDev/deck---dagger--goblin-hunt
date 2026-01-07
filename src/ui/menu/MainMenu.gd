@@ -1,6 +1,7 @@
 extends Control
 
 @onready var btn_jugar: Button = %BtnJugar
+@onready var btn_continuar: Button = %BtnContinuar
 @onready var btn_biblioteca: Button = %BtnBiblioteca
 @onready var btn_logros: Button = %BtnLogros
 @onready var btn_opciones: Button = %BtnOpciones
@@ -8,8 +9,10 @@ extends Control
 @onready var btn_profile: Button = %BtnProfile
 
 
+
 func _ready() -> void:
 	btn_jugar.pressed.connect(_on_btn_jugar_pressed)
+	btn_continuar.pressed.connect(_on_btn_continue_pressed)
 	btn_biblioteca.pressed.connect(_on_btn_biblioteca_pressed)
 	btn_logros.pressed.connect(_on_btn_logros_pressed)
 	btn_opciones.pressed.connect(_on_btn_opciones_pressed)
@@ -19,11 +22,12 @@ func _ready() -> void:
 	
 	print(Database.query("SELECT id_enemigo, nombre, vida_base, dano_base, recompensa_xp, tipo FROM enemigo ORDER BY id_enemigo;"))
 
+	btn_continuar.disabled = not FileAccess.file_exists(GameState.SAVE_PATH)
 
-
-
-
-
+func _on_btn_continue_pressed() -> void:
+	var loaded := GameState.load_from_disk()
+	if loaded:
+		get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")	
 
 func _on_btn_jugar_pressed() -> void:
 	print("Jugar: ir a mapa/camino")

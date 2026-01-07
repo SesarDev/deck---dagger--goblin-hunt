@@ -1,10 +1,7 @@
+res://src/scenes/map/MapScene.tscn
 res://src/ui/common/DeckTheme.tres
-res://src/ui/admin/AdminLogin.gd
-res://src/ui/admin/AdminPanel.gd
-res://src/core/database/database_service.gd
-res://src/scenes/admin/AdminLogin.tscn
+res://src/ui/map/MapScene.gd
+res://src/core/GameState.gd
+res://src/scenes/menu/MainMenu.tscn
 res://src/ui/menu/MainMenu.gd
-res://src/data/repositories/enemy_repository.gd
-res://src/core/combat/EnemyCombatState.gd
-res://src/core/achievements/achievements_service.gd
-res://src/core/combat/CombatManager.gd
+res://src/scenes/combat/CombatScene.tscn

@@ -1,4 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://e4v30opiuvbs"]
+[gd_scene load_steps=8 format=3 uid="uid://e4v30opiuvbs"]
+
+[ext_resource type="Script" uid="uid://cn7tlcw6b32ah" path="res://src/ui/map/MapNode.gd" id="1_qgkg6"]
+[ext_resource type="Texture2D" uid="uid://bsw1no8n6ptfh" path="res://assets/ui/map/icon_normal.png" id="2_cwxly"]
+[ext_resource type="Texture2D" uid="uid://d03adu60v4ivt" path="res://assets/ui/map/icon_elite.png" id="3_qpwge"]
+[ext_resource type="Texture2D" uid="uid://c5r1liyqf6t58" path="res://assets/ui/map/icon_boss.png" id="4_26g8f"]
+[ext_resource type="Texture2D" uid="uid://bpmcgte5b4ncb" path="res://assets/ui/map/icon_shop.png" id="5_yxil6"]
+[ext_resource type="Texture2D" uid="uid://b58eacuop8eoq" path="res://assets/ui/map/icon_evento.png" id="6_d257b"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hcrc6"]
 bg_color = Color(0.2901961, 0.18431373, 0.10980392, 1)
@@ -13,6 +20,14 @@ corner_radius_bottom_right = 30
 corner_radius_bottom_left = 30
 
 [node name="MapNode" type="Button"]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(72, 72)
 theme_type_variation = &"FlatButton"
+theme_override_constants/icon_max_width = 96
 theme_override_styles/normal = SubResource("StyleBoxFlat_hcrc6")
+expand_icon = true
+script = ExtResource("1_qgkg6")
+icon_normal = ExtResource("2_cwxly")
+icon_elite = ExtResource("3_qpwge")
+icon_boss = ExtResource("4_26g8f")
+icon_shop = ExtResource("5_yxil6")
+icon_event = ExtResource("6_d257b")

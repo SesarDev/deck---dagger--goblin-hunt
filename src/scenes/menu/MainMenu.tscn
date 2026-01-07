@@ -66,6 +66,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Jugar"
 
+[node name="BtnContinuar" type="Button" parent="PanelMenu/PanelFondo/VBoxContenido/VBoxBotones"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Continuar partida"
+
 [node name="BtnBiblioteca" type="Button" parent="PanelMenu/PanelFondo/VBoxContenido/VBoxBotones"]
 unique_name_in_owner = true
 layout_mode = 2
