@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=3 uid="uid://bb05d21oqvt27"]
+
+[ext_resource type="Script" uid="uid://baqpxycbo7hgs" path="res://assets/background/background_move.gd" id="1_wkysf"]
+[ext_resource type="Texture2D" uid="uid://brpap5wggg8ks" path="res://assets/background/forest_bg.png" id="2_w52j2"]
+
+[node name="BaseScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="."]
+z_index = -10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 2474.0
+offset_bottom = 1392.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.36, 0.36)
+mouse_filter = 2
+texture = ExtResource("2_w52j2")
+script = ExtResource("1_wkysf")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

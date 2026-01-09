@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dxse0x6urk2pj"]
+[gd_scene load_steps=5 format=3 uid="uid://dxse0x6urk2pj"]
 
 [ext_resource type="Theme" uid="uid://vvgre7h62n12" path="res://src/ui/common/DeckTheme.tres" id="1_r7md3"]
 [ext_resource type="PackedScene" uid="uid://dsfwrr8geg2vx" path="res://src/ui/common/CardView.tscn" id="2_74lw3"]
 [ext_resource type="Script" uid="uid://d14u7donaepr4" path="res://src/ui/combat/CombatScene.gd" id="2_txe4k"]
+[ext_resource type="PackedScene" uid="uid://bb05d21oqvt27" path="res://src/ui/common/BaseScene.tscn" id="3_ikysq"]
 
 [node name="CombatScene" type="Control"]
 layout_mode = 3
@@ -14,14 +15,8 @@ grow_vertical = 2
 theme = ExtResource("1_r7md3")
 script = ExtResource("2_txe4k")
 
-[node name="Fondo" type="ColorRect" parent="."]
+[node name="BaseScene" parent="." instance=ExtResource("3_ikysq")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.007856007, 0.1238732, 0.080836855, 1)
 
 [node name="VBoxRoot" type="VBoxContainer" parent="."]
 layout_mode = 1

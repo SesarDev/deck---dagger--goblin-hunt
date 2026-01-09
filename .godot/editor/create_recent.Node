@@ -1,6 +1,9 @@
+AnimationPlayer
+TextureRect
+Control
+CanvasLayer
 Button
 VBoxContainer
-Control
 Panel
 Label
 MarginContainer
@@ -9,6 +12,3 @@ HBoxContainer
 TextEdit
 OptionButton
 LineEdit
-ItemList
-NavigationObstacle2D
-ColorRect
