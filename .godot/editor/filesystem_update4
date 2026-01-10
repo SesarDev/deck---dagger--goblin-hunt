@@ -1,9 +1,3 @@
-res://src/ui/common/DeckTheme.tres
-res://src/ui/common/BaseScene.tscn
-res://assets/background/background_move.gd
-res://src/scenes/menu/MainMenu.tscn
 res://src/scenes/combat/CombatScene.tscn
-res://src/scenes/map/MapScene.tscn
-res://src/scenes/events/EventScene.tscn
-res://src/scenes/splash/SplashScene.tscn
-res://src/scenes/splash/SplashScene.gd
+res://src/ui/common/DeckTheme.tres
+res://src/ui/admin/AdminEnemies.gd

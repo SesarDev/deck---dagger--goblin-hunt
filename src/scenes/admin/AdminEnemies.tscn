@@ -108,6 +108,10 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="ImageOption" type="OptionButton" parent="VBoxRoot/Body/RightPanel/VBoxForm"]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="DescEdit" type="TextEdit" parent="VBoxRoot/Body/RightPanel/VBoxForm"]
 unique_name_in_owner = true
 layout_mode = 2

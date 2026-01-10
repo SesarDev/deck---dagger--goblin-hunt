@@ -1,5 +1,6 @@
-AnimationPlayer
 TextureRect
+OptionButton
+AnimationPlayer
 Control
 CanvasLayer
 Button
@@ -10,5 +11,4 @@ MarginContainer
 SpinBox
 HBoxContainer
 TextEdit
-OptionButton
 LineEdit

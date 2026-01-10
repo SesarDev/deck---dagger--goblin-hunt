@@ -8,6 +8,7 @@ var max_hp: int = 1
 var damage: int = 0
 var recompensa_xp: int = 0
 var tipo: String = "NORMAL"
+var imagen: String = ""
 
 
 func load_from_row(row: Dictionary) -> void:
@@ -18,3 +19,4 @@ func load_from_row(row: Dictionary) -> void:
 	damage = int(row["dano_base"])
 	recompensa_xp = int(row.get("recompensa_xp", 0))
 	tipo = String(row.get("tipo", "NORMAL"))
+	imagen = String(row.get("imagen", ""))

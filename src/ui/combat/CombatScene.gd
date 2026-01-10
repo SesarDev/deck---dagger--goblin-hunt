@@ -8,6 +8,8 @@ extends Control
 @onready var lbl_enemy_hp: Label = $VBoxRoot/HBoxHUD/EnemyPanel/VBoxEnemy/EnemyHP
 @onready var lbl_enemy_intent: Label = $VBoxRoot/HBoxHUD/EnemyPanel/VBoxEnemy/EnemyIntent
 
+@onready var enemy_sprite: TextureRect = %EnemySprite
+
 @onready var card_1: Button = $VBoxRoot/HBoxHand/Card_1
 @onready var card_2: Button = $VBoxRoot/HBoxHand/Card_2
 @onready var card_3: Button = $VBoxRoot/HBoxHand/Card_3
@@ -49,6 +51,13 @@ func _refresh_ui() -> void:
 	lbl_enemy_name.text = combat.enemy.name
 	lbl_enemy_hp.text = "HP: %d/%d" % [combat.enemy.hp, combat.enemy.max_hp]
 	lbl_enemy_intent.text = "Intención: Atacar (%d daño)" % combat.enemy.damage
+
+	# Imagen enemigo
+	var path := combat.enemy.imagen
+	if path != "" and ResourceLoader.exists(path):
+		enemy_sprite.texture = load(path)
+	else:
+		enemy_sprite.texture = null
 
 	# Mano (5 slots)
 	var slots := [card_1, card_2, card_3, card_4, card_5]

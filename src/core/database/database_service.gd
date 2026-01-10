@@ -86,6 +86,7 @@ func apply_migrations() -> void:
 	"res://data/db/migrations/002_seed_unlock_rules.sql",
 	"res://data/db/migrations/003_reseed_cards_and_achievements.sql",
 	"res://data/db/migrations/004_add_enemy_type.sql",
+	"res://data/db/migrations/005_add_enemy_imagen.sql",
 	]
 
 
@@ -103,7 +104,7 @@ func apply_migrations() -> void:
 		print("[DB] Migración aplicada:", name)
 
 func _migration_applied(name: String) -> bool:
-	var rows := Database.query("SELECT name FROM schema_migrations WHERE name='%s' LIMIT 1;" % _escape_sql(name))
+	var rows := query("SELECT name FROM schema_migrations WHERE name='%s' LIMIT 1;" % _escape_sql(name))
 	return rows.size() > 0
 
 func _escape_sql(s: String) -> String:

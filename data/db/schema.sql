@@ -43,8 +43,11 @@ CREATE TABLE IF NOT EXISTS enemigo (
     vida_base       INTEGER NOT NULL DEFAULT 10 CHECK (vida_base > 0),
     dano_base       INTEGER NOT NULL DEFAULT 1 CHECK (dano_base >= 0),
     recompensa_xp   INTEGER NOT NULL DEFAULT 5 CHECK (recompensa_xp >= 0),
-    disponible      INTEGER NOT NULL DEFAULT 1 CHECK (disponible IN (0,1))
+    disponible      INTEGER NOT NULL DEFAULT 1 CHECK (disponible IN (0,1)),
+    tipo            TEXT NOT NULL DEFAULT 'NORMAL',
+    imagen          TEXT NOT NULL DEFAULT ''
 );
+
 
 CREATE TABLE IF NOT EXISTS logro (
     id_logro        INTEGER PRIMARY KEY AUTOINCREMENT,

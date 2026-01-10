@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://dxse0x6urk2pj"]
+[gd_scene load_steps=6 format=3 uid="uid://dxse0x6urk2pj"]
 
 [ext_resource type="Theme" uid="uid://vvgre7h62n12" path="res://src/ui/common/DeckTheme.tres" id="1_r7md3"]
 [ext_resource type="PackedScene" uid="uid://dsfwrr8geg2vx" path="res://src/ui/common/CardView.tscn" id="2_74lw3"]
 [ext_resource type="Script" uid="uid://d14u7donaepr4" path="res://src/ui/combat/CombatScene.gd" id="2_txe4k"]
 [ext_resource type="PackedScene" uid="uid://bb05d21oqvt27" path="res://src/ui/common/BaseScene.tscn" id="3_ikysq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ikysq"]
 
 [node name="CombatScene" type="Control"]
 layout_mode = 3
@@ -30,7 +32,7 @@ alignment = 1
 
 [node name="HBoxHUD" type="HBoxContainer" parent="VBoxRoot"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 500
 alignment = 1
 
 [node name="PlayerPanel" type="Panel" parent="VBoxRoot/HBoxHUD"]
@@ -49,7 +51,7 @@ alignment = 1
 [node name="PlayerName" type="Label" parent="VBoxRoot/HBoxHUD/PlayerPanel/VBoxPlayer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Juagdor"
+text = "Jugador"
 horizontal_alignment = 1
 
 [node name="PlayerHP" type="Label" parent="VBoxRoot/HBoxHUD/PlayerPanel/VBoxPlayer"]
@@ -95,18 +97,18 @@ horizontal_alignment = 1
 [node name="Battlefield" type="Panel" parent="VBoxRoot"]
 custom_minimum_size = Vector2(800, 220)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_ikysq")
 
-[node name="BattlefieldLabel" type="Label" parent="VBoxRoot/Battlefield"]
+[node name="EnemySprite" type="TextureRect" parent="VBoxRoot/Battlefield"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -179.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Aquí ira el enemigo y animaciones ene l futuro"
-horizontal_alignment = 1
-vertical_alignment = 1
+stretch_mode = 5
 
 [node name="HBoxHand" type="HBoxContainer" parent="VBoxRoot"]
 layout_mode = 2
