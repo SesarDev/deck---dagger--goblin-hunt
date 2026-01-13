@@ -21,6 +21,7 @@ extends Control
 
 var combat := CombatManager.new()
 
+
 func _ready() -> void:
 	randomize()
 
@@ -31,6 +32,7 @@ func _ready() -> void:
 
 	combat.start_combat() # enemigo aleatorio desde BD
 
+
 func _connect_signals() -> void:
 	card_1.pressed.connect(func(): _on_card_played(0))
 	card_2.pressed.connect(func(): _on_card_played(1))
@@ -40,6 +42,7 @@ func _connect_signals() -> void:
 
 	btn_end_turn.pressed.connect(_on_end_turn_pressed)
 	btn_back_to_map.pressed.connect(_on_back_to_map_pressed)
+
 
 func _refresh_ui() -> void:
 	# HUD jugador
@@ -76,11 +79,14 @@ func _refresh_ui() -> void:
 			btn.disabled = true
 			(btn as Button).set_card_data("-", 0, "")
 
+
 func _on_card_played(hand_index: int) -> void:
 	combat.play_card(hand_index)
 
+
 func _on_end_turn_pressed() -> void:
 	combat.end_player_turn()
+
 
 func _on_combat_ended(victory: bool, xp_gained: int, enemy_name: String) -> void:
 	btn_end_turn.disabled = true
@@ -89,27 +95,65 @@ func _on_combat_ended(victory: bool, xp_gained: int, enemy_name: String) -> void
 	for b in slots:
 		b.disabled = true
 
+	# Evita volver al mapa saltándose la recompensa/resultado
+	btn_back_to_map.disabled = true
+
 	if victory:
 		lbl_enemy_intent.text = "VICTORIA"
-		_show_result_dialog("Victoria",
-			"Has derrotado a %s.\nRecompensa: +%d XP" % [enemy_name, xp_gained]
-		)
+		_show_victory_reward_dialog(xp_gained, enemy_name)
 	else:
 		lbl_enemy_intent.text = "DERROTA"
-		_show_result_dialog("Derrota",
-			"Has sido derrotado por %s." % enemy_name
-		)
+		_show_defeat_dialog(enemy_name)
 
 
 func _on_back_to_map_pressed() -> void:
+	# Por seguridad, si el combate no ha terminado, permite salir (si lo quieres).
+	# Si prefieres bloquear siempre, deja el botón deshabilitado al inicio.
 	get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")
-	
-func _show_result_dialog(title_text: String, message: String) -> void:
+
+
+func _show_victory_reward_dialog(xp_gained: int, enemy_name: String) -> void:
 	var dlg := AcceptDialog.new()
-	dlg.title = title_text
-	dlg.dialog_text = message
+	dlg.title = "Recompensa"
+	dlg.dialog_text = (
+		"Has derrotado a %s.\n\n" % enemy_name +
+		"Recompensas:\n" +
+		"• +%d XP\n\n" % xp_gained +
+		"Pulsa Continuar para volver al mapa."
+	)
+	dlg.ok_button_text = "Continuar"
+
 	add_child(dlg)
 	dlg.popup_centered()
+
 	dlg.confirmed.connect(func():
+		var cur_id := GameState.current_node_id
+
+		# Marca el nodo como completado para desbloquear la siguiente columna
+		GameState.cleared[cur_id] = true
+
+		# Si tienes gestión de XP global, aquí es donde se aplicaría
+		# GameState.add_xp(xp_gained)
+
+		GameState.save_to_disk() # opcional, recomendable
 		dlg.queue_free()
+
+		get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")
+	)
+
+
+func _show_defeat_dialog(enemy_name: String) -> void:
+	var dlg := AcceptDialog.new()
+	dlg.title = "Derrota"
+	dlg.dialog_text = "Has sido derrotado por %s.\n\nPulsa Continuar para volver al mapa." % enemy_name
+	dlg.ok_button_text = "Continuar"
+
+	add_child(dlg)
+	dlg.popup_centered()
+
+	dlg.confirmed.connect(func():
+		GameState.save_to_disk() # opcional
+		dlg.queue_free()
+
+		get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")
 	)

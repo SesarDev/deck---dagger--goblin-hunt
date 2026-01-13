@@ -39,15 +39,14 @@ var connections: Array = []                      # pares [from_node, to_node] pa
 var current_node_id: String = "1-1"
 var cleared: Dictionary = {}                     # "col-row" -> bool
 
-func _ready() -> void:
-	
 
+func _ready() -> void:
 	if map_node_scene == null:
 		push_error("MapScene: asigna map_node_scene (MapNode.tscn)")
 		return
-		
+
 	btn_menu.pressed.connect(_on_btn_menu_pressed)
-	
+
 	if GameState.run_active and not GameState.adjacency.is_empty():
 		_restore_map_from_state()
 	else:
@@ -65,7 +64,6 @@ func _ready() -> void:
 	_set_locked(current_node_id, false)
 	_refresh_unlocks_from_current()
 
-	
 
 # ------------------------------------------------------
 # Construcción de columnas + nodos (1 / 2-4 / 1)
@@ -113,6 +111,7 @@ func _build_columns_nodes_dynamic_counts(generate_and_store: bool) -> void:
 			nodes_by_id[id] = node
 			nodes_by_column[col].append(id)
 
+
 func _assign_node_types_by_probability() -> void:
 	# Col 1: inicio siempre NORMAL
 	_set_column_types_fixed(1, MapNode.NodeType.NORMAL)
@@ -151,13 +150,13 @@ func _assign_node_types_by_probability() -> void:
 				col_has_combat = true
 
 		# Regla: en cada columna debe existir al menos 1 combate (normal o élite)
-		# Si no lo hay, forzamos uno al azar a NORMAL.
 		if not col_has_combat and ids.size() > 0:
 			var pick_id: String = ids.pick_random() as String
 			nodes_by_id[pick_id].node_type = MapNode.NodeType.NORMAL
 			col_has_combat = true
 
 		prev_col_had_shop = col_has_shop
+
 
 func _set_column_types_fixed(col: int, t: int) -> void:
 	var ids: Array = nodes_by_column[col]
@@ -166,8 +165,8 @@ func _set_column_types_fixed(col: int, t: int) -> void:
 		var n: MapNode = nodes_by_id[id]
 		n.node_type = t
 
+
 func _roll_node_type(allow_shop: bool, allow_elite: bool) -> int:
-	# NORMAL es el fallback
 	var r := randf()
 
 	# EVENT
@@ -189,14 +188,15 @@ func _roll_node_type(allow_shop: bool, allow_elite: bool) -> int:
 
 	return MapNode.NodeType.NORMAL
 
+
 func _get_vbox_for_column(col: int) -> VBoxContainer:
-	# Deben existir VBoxFloor1..VBoxFloor8 dentro de HBoxFloors
 	var path := "VBoxFloor%d" % col
 	var vbox := hbox_floors.get_node_or_null(path)
 	if vbox == null:
 		push_error("MapScene: falta el nodo %s dentro de HBoxFloors." % path)
 		return VBoxContainer.new()
 	return vbox as VBoxContainer
+
 
 # ------------------------------------------------------
 # Conexiones aleatorias por partida (1-3 salidas)
@@ -215,7 +215,6 @@ func _generate_connections_random() -> void:
 	for col in range(1, columns):
 		var from_ids: Array = nodes_by_column[col]
 		var to_ids: Array = nodes_by_column[col + 1]
-
 
 		for from_id_any in from_ids:
 			var from_id: String = from_id_any as String
@@ -248,21 +247,20 @@ func _generate_connections_random() -> void:
 		var from_id: String = last_from[i] as String
 		_add_edge(from_id, boss_id)
 
+
 func _add_edge(from_id: String, to_id: String) -> void:
-	# evita duplicados
 	if to_id in adjacency[from_id]:
 		return
 
-	# seguridad: solo a la derecha
 	if _col_from_id(to_id) <= _col_from_id(from_id):
 		return
 
 	adjacency[from_id].append(to_id)
 
-	# para dibujar líneas
 	var from_node: Node = nodes_by_id[from_id]
 	var to_node: Node = nodes_by_id[to_id]
 	connections.append([from_node, to_node])
+
 
 func _in_degree(id: String) -> int:
 	var count := 0
@@ -272,10 +270,12 @@ func _in_degree(id: String) -> int:
 			count += 1
 	return count
 
+
 func _pick_unique(source: Array, amount: int) -> Array:
 	var tmp := source.duplicate()
 	tmp.shuffle()
 	return tmp.slice(0, amount)
+
 
 # ------------------------------------------------------
 # Señales y click (abre escena directo)
@@ -286,18 +286,20 @@ func _connect_node_signals() -> void:
 		var n: MapNode = nodes_by_id[id]
 		n.pressed.connect(func(): _on_node_pressed(id))
 
+
 func _on_node_pressed(id: String) -> void:
 	var cur_id := GameState.current_node_id
 	var node: MapNode = nodes_by_id[id]
 
-	if id == cur_id:
+	# Si es el nodo actual, solo bloqueamos si YA está completado
+	if id == cur_id and bool(GameState.cleared.get(cur_id, false)):
 		return
 
 	# No permitir clicks en bloqueados
 	if node.disabled:
 		return
 
-	# Regla NUEVA: solo puedes ir al propio nodo actual (si quieres) o a un vecino directo
+	# Solo vecino directo desde el nodo actual
 	if id != cur_id:
 		var next_ids: Array = adjacency.get(cur_id, [])
 		if not (id in next_ids):
@@ -318,17 +320,20 @@ func _on_node_pressed(id: String) -> void:
 			get_tree().change_scene_to_file("res://src/scenes/combat/CombatScene.tscn")
 
 
-
 # Llamar al volver de combate/tienda/evento
 func complete_current_node() -> void:
-	GameState.cleared[current_node_id] = true
+	var cur_id := GameState.current_node_id
+	GameState.cleared[cur_id] = true
+	current_node_id = cur_id
 	_apply_cleared_to_nodes()
 	_refresh_unlocks_from_current()
+
 
 func _apply_cleared_to_nodes() -> void:
 	for id in nodes_by_id.keys():
 		var done := bool(GameState.cleared.get(id, false))
 		nodes_by_id[id].cleared = done
+
 
 func _deep_copy_adjacency(src: Dictionary) -> Dictionary:
 	var dst: Dictionary = {}
@@ -337,43 +342,27 @@ func _deep_copy_adjacency(src: Dictionary) -> Dictionary:
 		dst[k] = arr.duplicate(true)
 	return dst
 
+
 # ------------------------------------------------------
 # Progresión: desbloquear alcanzables a la derecha
 # ------------------------------------------------------
 func _refresh_unlocks_from_current() -> void:
 	var cur_id := GameState.current_node_id
 
-	# Bloquea todo
 	_set_all_locked(true)
 
-	# (Opcional) Mantener el nodo actual desbloqueado (normalmente no hace falta pulsarlo)
+	# El nodo actual siempre visible/clicable (para poder entrar por primera vez)
 	nodes_by_id[cur_id].locked = false
 
-	# Desbloquea SOLO los vecinos directos (siguientes nodos por camino)
+	# Si el nodo actual NO está completado, NO se desbloquea nada a la derecha
+	if not bool(GameState.cleared.get(cur_id, false)):
+		return
+
+	# Si está completado, desbloquea vecinos directos
 	var next_ids: Array = adjacency.get(cur_id, [])
 	for nxt_id in next_ids:
 		nodes_by_id[nxt_id].locked = false
 
-
-func _reachable_from(start_id: String) -> Array[String]:
-	var visited: Dictionary = {}
-	var stack: Array[String] = [start_id]
-	visited[start_id] = true
-
-	while stack.size() > 0:
-		var cur: String = stack.pop_back() as String
-		for nxt_any in adjacency.get(cur, []):
-			var nxt: String = nxt_any as String
-			if not visited.has(nxt):
-				visited[nxt] = true
-				stack.push_back(nxt)
-
-	var result: Array[String] = []
-	for k_any in visited.keys():
-		var k: String = k_any as String
-		if k != start_id:
-			result.append(k)
-	return result
 
 # ------------------------------------------------------
 # Estado visual del nodo
@@ -383,13 +372,16 @@ func _set_all_locked(value: bool) -> void:
 		var id: String = id_any as String
 		_set_locked(id, value)
 
+
 func _set_locked(id: String, value: bool) -> void:
 	var n: MapNode = nodes_by_id[id]
 	n.locked = value
 
+
 func _set_cleared(id: String, value: bool) -> void:
 	var n: MapNode = nodes_by_id[id]
 	n.cleared = value
+
 
 # ------------------------------------------------------
 # Dibujo de líneas
@@ -397,7 +389,6 @@ func _set_cleared(id: String, value: bool) -> void:
 func _draw_connections() -> void:
 	await get_tree().process_frame
 
-	# limpia líneas anteriores
 	for c in line_layer.get_children():
 		c.queue_free()
 
@@ -416,21 +407,23 @@ func _draw_connections() -> void:
 		line.add_point(p1)
 		line.add_point(p2)
 
+
 # ------------------------------------------------------
 # Helpers IDs
 # ------------------------------------------------------
 func _col_from_id(id: String) -> int:
 	return int(id.split("-")[0])
 
+
 # GENERAR Y GUARDAR
 func _generate_new_map_and_save_state() -> void:
 	# Seed estable para toda la run
-	var seed: int = int(Time.get_unix_time_from_system()) ^ randi()
+	var run_seed: int = int(Time.get_unix_time_from_system()) ^ randi()
 
-	GameState.new_run(seed, columns)
-	seed(seed) # fija RNG para que todo sea determinista durante la creación
+	GameState.new_run(run_seed, columns)
+	seed(run_seed) # fija RNG para que todo sea determinista durante la creación
 
-	_build_columns_nodes_dynamic_counts(true) # genera counts y guarda en GameState
+	_build_columns_nodes_dynamic_counts(true)
 	_assign_node_types_by_probability()
 	_generate_connections_random()
 
@@ -446,29 +439,41 @@ func _generate_new_map_and_save_state() -> void:
 
 	GameState.adjacency = _deep_copy_adjacency(adjacency)
 
+	# Elegir 1 jefe para esta run y guardarlo en GameState (si aún no hay uno)
+	# AJUSTE: la tabla probablemente es "enemigo" (singular). Cambia si en tu BD es "enemigos".
+	if GameState.boss_enemy_id <= 0:
+		var boss_rows := Database.query("SELECT id_enemigo FROM enemigo WHERE tipo = 'Jefe' ORDER BY RANDOM() LIMIT 1;")
+		if boss_rows.size() > 0:
+			GameState.boss_enemy_id = int(boss_rows[0]["id_enemigo"])
+		else:
+			GameState.boss_enemy_id = -1
+
+	# Guarda inmediatamente el snapshot, incluido boss_enemy_id
+	GameState.save_to_disk()
+
+
 func _restore_map_from_state() -> void:
-	# Usa los mismos counts por columna que se generaron la primera vez
 	columns = GameState.map_columns
 
-	_build_columns_nodes_dynamic_counts(false) # crea nodos según GameState.nodes_per_column
+	_build_columns_nodes_dynamic_counts(false)
 
 	# Aplica tipos guardados
 	for id in nodes_by_id.keys():
 		if GameState.node_types.has(id):
 			nodes_by_id[id].node_type = GameState.node_types[id]
 
-	# Restaura adjacency y reconstruye "connections" para las líneas
+	# Restaura adjacency y reconstruye conexiones
 	adjacency = _deep_copy_adjacency(GameState.adjacency)
 	connections.clear()
 
 	for from_id in adjacency.keys():
 		var tos: Array = adjacency[from_id]
 		for to_id in tos:
-			# reconstruimos pares [node,node] para dibujar líneas
 			if nodes_by_id.has(from_id) and nodes_by_id.has(to_id):
 				connections.append([nodes_by_id[from_id], nodes_by_id[to_id]])
 
 	current_node_id = GameState.current_node_id
+
 
 func _on_btn_menu_pressed() -> void:
 	print("boton menu pulsado")

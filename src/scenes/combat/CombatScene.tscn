@@ -101,13 +101,20 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_ikysq")
 
 [node name="EnemySprite" type="TextureRect" parent="VBoxRoot/Battlefield"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 320)
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -179.0
+anchors_preset = -1
+anchor_left = 0.49600002
+anchor_top = 0.132
+anchor_right = 0.49600002
+anchor_bottom = 0.132
+offset_left = -266.536
+offset_top = -248.04
+offset_right = 275.464
+offset_bottom = 295.96
 grow_horizontal = 2
 grow_vertical = 2
+expand_mode = 1
 stretch_mode = 5
 
 [node name="HBoxHand" type="HBoxContainer" parent="VBoxRoot"]

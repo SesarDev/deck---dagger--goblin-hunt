@@ -4,7 +4,6 @@ class_name CombatManager
 signal state_changed
 signal combat_ended(victory: bool, xp_gained: int, enemy_name: String)
 
-
 var enemy_repo := EnemyRepository.new()
 
 var player := PlayerCombatState.new()
@@ -17,13 +16,15 @@ var _player_hp_at_start: int = 0
 func start_combat(enemy_id: int = -1) -> void:
 	# 1) Cargar enemigo desde BD
 	var enemy_row: Dictionary
+
 	_player_hp_at_start = player.hp
 
-	if enemy_id == -1:
-		var enemies := enemy_repo.get_all()
-		enemy_row = enemies[randi() % enemies.size()]
-	else:
+	if enemy_id != -1:
+		# Override explícito (útil para testing o combates concretos)
 		enemy_row = enemy_repo.get_by_id(enemy_id)
+	else:
+		# Selección automática según tipo de nodo del mapa
+		enemy_row = _pick_enemy_row_for_current_node()
 
 	enemy.load_from_row(enemy_row)
 
@@ -56,10 +57,65 @@ func start_combat(enemy_id: int = -1) -> void:
 	start_player_turn()
 	state_changed.emit()
 
+
+func _pick_enemy_row_for_current_node() -> Dictionary:
+	# Determina el tipo del nodo actual en el mapa y elige un enemigo acorde.
+	# Para BOSS, usa GameState.boss_enemy_id (ya existe en GameState.gd).
+
+	var node_id: String = String(GameState.current_node_id)
+
+	var node_type: int = MapNode.NodeType.NORMAL
+	if GameState.node_types.has(node_id):
+		node_type = int(GameState.node_types.get(node_id, MapNode.NodeType.NORMAL))
+
+	# 1) BOSS: cargar el jefe asignado a la run si existe
+	if node_type == MapNode.NodeType.BOSS:
+		var boss_id: int = int(GameState.boss_enemy_id)
+
+		if boss_id > 0:
+			var row: Dictionary = enemy_repo.get_by_id(boss_id)
+			if not row.is_empty():
+				return row
+
+		# Fallback: random Jefe si no hay asignado / no existe en BD
+		return _pick_random_enemy_by_tipo("Jefe")
+
+	# 2) ÉLITE
+	if node_type == MapNode.NodeType.ELITE:
+		return _pick_random_enemy_by_tipo("Élite")
+
+	# 3) NORMAL (y por defecto)
+	return _pick_random_enemy_by_tipo("Normal")
+
+
+
+func _pick_random_enemy_by_tipo(tipo: String) -> Dictionary:
+	# EnemyRepository.get_all() ya lo tienes. Filtramos por tipo.
+	# Esto evita asumir métodos extra en el repo.
+	var enemies: Array = enemy_repo.get_all()
+	if enemies.is_empty():
+		return {} # debería no ocurrir; si pasa, fallará más abajo y lo verás rápido
+
+	# Filtra por tipo exacto
+	var filtered: Array = []
+	for e in enemies:
+		if typeof(e) == TYPE_DICTIONARY:
+			var t := String((e as Dictionary).get("tipo", ""))
+			if t == tipo:
+				filtered.append(e)
+
+	# Si no hay del tipo pedido, fallback a cualquiera
+	if filtered.is_empty():
+		return enemies[randi() % enemies.size()]
+
+	return filtered[randi() % filtered.size()]
+
+
 func start_player_turn() -> void:
 	player.reset_for_new_turn()
 	_draw_cards(player.draw_per_turn)
 	state_changed.emit()
+
 
 func play_card(hand_index: int) -> void:
 	if hand_index < 0 or hand_index >= player.hand.size():
@@ -75,11 +131,11 @@ func play_card(hand_index: int) -> void:
 
 	# mover carta a descarte
 	var played: Dictionary = player.hand.pop_at(hand_index)
-
 	player.discard.append(played)
 
 	_check_end_conditions()
 	state_changed.emit()
+
 
 func end_player_turn() -> void:
 	# descartar mano
@@ -92,6 +148,7 @@ func end_player_turn() -> void:
 	if player.hp > 0 and enemy.hp > 0:
 		start_player_turn()
 
+
 func _enemy_act() -> void:
 	var dmg := enemy.damage
 
@@ -103,6 +160,7 @@ func _enemy_act() -> void:
 	player.hp -= dmg
 	if player.hp < 0:
 		player.hp = 0
+
 
 func _apply_card_effect(c: Dictionary) -> void:
 	var tipo := String(c["tipo"])
@@ -120,6 +178,7 @@ func _apply_card_effect(c: Dictionary) -> void:
 			else:
 				player.hp = mini(player.max_hp, player.hp + value)
 
+
 func _draw_cards(n: int) -> void:
 	for _i in range(n):
 		if player.deck.is_empty():
@@ -131,12 +190,14 @@ func _draw_cards(n: int) -> void:
 
 		player.hand.append(player.deck.pop_back())
 
+
 func _shuffle(arr: Array) -> void:
 	for i in range(arr.size() - 1, 0, -1):
 		var j := randi() % (i + 1)
 		var tmp = arr[i]
 		arr[i] = arr[j]
 		arr[j] = tmp
+
 
 func _check_end_conditions() -> void:
 	if enemy.hp <= 0:
@@ -148,7 +209,7 @@ func _check_end_conditions() -> void:
 	elif player.hp <= 0:
 		combat_ended.emit(false, 0, enemy.name)
 
-		
+
 func _on_victory() -> void:
 	var user_id: int = 1 # MVP: admin
 	var xp_gained: int = enemy.recompensa_xp
@@ -163,6 +224,7 @@ func _on_victory() -> void:
 
 	# Subida de nivel simple (cada 100 XP)
 	_check_level_up(user_id)
+
 
 func _check_level_up(user_id: int) -> void:
 	var rows := Database.query("""

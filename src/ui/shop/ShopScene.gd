@@ -24,6 +24,7 @@ var shop_items := [
 	{"name":"Cuchillada Goblin", "cost":2, "desc":"Inflige 10 de daño. Aplica 1 Vulnerable.", "price":65},
 ]
 
+
 func _ready() -> void:
 	gold_label.text = "Oro: %d" % gold
 	btn_buy.disabled = true
@@ -31,10 +32,12 @@ func _ready() -> void:
 	_fill_shop_cards()
 	_connect_signals()
 
+
 func _fill_shop_cards() -> void:
 	(shop_card_1).set_card_data(shop_items[0].name, shop_items[0].cost, shop_items[0].desc)
 	(shop_card_2).set_card_data(shop_items[1].name, shop_items[1].cost, shop_items[1].desc)
 	(shop_card_3).set_card_data(shop_items[2].name, shop_items[2].cost, shop_items[2].desc)
+
 
 func _connect_signals() -> void:
 	shop_card_1.pressed.connect(func(): _select_item(0))
@@ -43,6 +46,7 @@ func _connect_signals() -> void:
 
 	btn_buy.pressed.connect(_buy_selected)
 	btn_back.pressed.connect(_back_to_map)
+
 
 func _select_item(i: int) -> void:
 	selected_index = i
@@ -56,6 +60,7 @@ func _select_item(i: int) -> void:
 	btn_buy.disabled = false
 
 	print("Seleccionada carta tienda:", item.name)
+
 
 func _buy_selected() -> void:
 	if selected_index == -1:
@@ -74,9 +79,22 @@ func _buy_selected() -> void:
 
 	print("Comprada:", item.name, "por", price)
 
-	# Feedback visual simple
+	# Aquí es donde, cuando conectes con tu inventario/BD, deberías persistir la compra:
+	# - añadir carta al mazo
+	# - actualizar oro en progreso
+	# - guardar en SQLite o en GameState
+
 	detail_price.text = "Comprada por %d oro" % price
 	btn_buy.disabled = true
 
+
 func _back_to_map() -> void:
+	# 1) Marcar nodo shop como completado (desbloquea la siguiente columna)
+	var cur_id := GameState.current_node_id
+	GameState.cleared[cur_id] = true
+
+	# 2) Persistencia (si tienes oro global, aquí actualizarías GameState.gold)
+	# GameState.gold = gold
+
+	GameState.save_to_disk() # recomendable
 	get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")

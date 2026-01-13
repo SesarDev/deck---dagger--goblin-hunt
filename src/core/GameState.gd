@@ -20,6 +20,10 @@ var adjacency: Dictionary = {}
 var current_node_id: String = "1-1"
 var cleared: Dictionary = {}           # "col-row" -> bool
 
+# Boss
+var boss_enemy_id: int = -1
+
+
 func new_run(seed: int, columns: int) -> void:
 	run_active = true
 	map_seed = seed
@@ -29,27 +33,37 @@ func new_run(seed: int, columns: int) -> void:
 	node_types.clear()
 	adjacency.clear()
 	cleared.clear()
+
 	current_node_id = "1-1"
+	boss_enemy_id = -1
+
 
 func clear_run() -> void:
 	run_active = false
+
 	nodes_per_column.clear()
 	node_types.clear()
 	adjacency.clear()
 	cleared.clear()
+
 	current_node_id = "1-1"
+	map_seed = 0
+	boss_enemy_id = -1
+
 
 const SAVE_PATH := "user://savegame.json"
 
 func save_to_disk() -> void:
 	var data := {
 		"run_active": run_active,
+		"map_seed": map_seed,
 		"map_columns": map_columns,
 		"nodes_per_column": nodes_per_column,
 		"node_types": node_types,
 		"adjacency": adjacency,
 		"cleared": cleared,
-		"current_node_id": current_node_id
+		"current_node_id": current_node_id,
+		"boss_enemy_id": boss_enemy_id
 	}
 
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -59,6 +73,7 @@ func save_to_disk() -> void:
 
 	file.store_string(JSON.stringify(data))
 	file.close()
+
 
 func load_from_disk() -> bool:
 	if not FileAccess.file_exists(SAVE_PATH):
@@ -82,11 +97,12 @@ func load_from_disk() -> bool:
 		push_error("JSON error línea %d: %s" % [json.get_error_line(), json.get_error_message()])
 		return false
 
-	var data: Dictionary = json.data   # 🔴 ESTA ES LA CLAVE
-	# nada de := aquí
+	var data: Dictionary = json.data
 
 	run_active = bool(data.get("run_active", false))
+	map_seed = int(data.get("map_seed", 0))
 	map_columns = int(data.get("map_columns", 8))
+
 	# Normaliza nodes_per_column para que las claves sean int (JSON las carga como String)
 	var npc_raw: Dictionary = data.get("nodes_per_column", {})
 	nodes_per_column = {}
@@ -97,5 +113,7 @@ func load_from_disk() -> bool:
 	adjacency = data.get("adjacency", {})
 	cleared = data.get("cleared", {})
 	current_node_id = String(data.get("current_node_id", "1-1"))
+
+	boss_enemy_id = int(data.get("boss_enemy_id", -1))
 
 	return run_active
