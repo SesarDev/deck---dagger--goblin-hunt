@@ -1,3 +1,13 @@
 res://src/scenes/combat/CombatScene.tscn
 res://src/ui/common/DeckTheme.tres
 res://src/ui/admin/AdminEnemies.gd
+res://src/ui/admin/AdminHub.gd
+res://assets/background/background_move.gd
+res://src/ui/common/BaseScene.tscn
+res://src/ui/combat/CombatScene.gd
+res://src/ui/common/CardView.gd
+res://src/scenes/events/EventScene.tscn
+res://src/ui/events/EventScene.gd
+res://src/ui/library/LibraryScene.gd
+res://src/ui/map/MapNode.gd
+res://src/ui/map/MapScene.gd
