@@ -1,3 +1,4 @@
+# res://src/ui/library/LibraryScene.gd
 extends Control
 
 @onready var btn_back: Button = %BtnBack
@@ -18,12 +19,39 @@ extends Control
 
 const CARD_VIEW_SCENE := preload("res://src/ui/common/CardView.tscn")
 
+# Datos desde BD: fila de carta (id_carta, nombre, descripcion, tipo, coste_energia, rareza, disponible)
 var cards: Array = []
 var filtered_cards: Array = []
 
+const TYPE_DB_TO_UI := {
+	"ATAQUE": "Ataque",
+	"DEFENSA": "Defensa",
+	"HABILIDAD": "Habilidad",
+}
+
+const TYPE_UI_TO_DB := {
+	"Ataque": "ATAQUE",
+	"Defensa": "DEFENSA",
+	"Habilidad": "HABILIDAD",
+}
+
+const RARITY_DB_TO_UI := {
+	"COMUN": "Común",
+	"RARO": "Rara",
+	"EPICO": "Épica",
+	"LEGENDARIO": "Legendaria",
+}
+
+const RARITY_UI_TO_DB := {
+	"Común": "COMUN",
+	"Rara": "RARO",
+	"Épica": "EPICO",
+	"Legendaria": "LEGENDARIO",
+}
+
 func _ready() -> void:
 	_init_filters()
-	_load_dummy_cards()
+	_load_from_db()
 	_apply_filters()
 
 	btn_back.pressed.connect(_back)
@@ -33,6 +61,7 @@ func _ready() -> void:
 	type_filter.item_selected.connect(func(_i): _apply_filters())
 	rarity_filter.item_selected.connect(func(_i): _apply_filters())
 	cost_filter.item_selected.connect(func(_i): _apply_filters())
+
 
 func _init_filters() -> void:
 	type_filter.clear()
@@ -46,6 +75,7 @@ func _init_filters() -> void:
 	rarity_filter.add_item("Común")
 	rarity_filter.add_item("Rara")
 	rarity_filter.add_item("Épica")
+	rarity_filter.add_item("Legendaria")
 
 	cost_filter.clear()
 	cost_filter.add_item("Coste: Todos")
@@ -54,48 +84,57 @@ func _init_filters() -> void:
 	cost_filter.add_item("2")
 	cost_filter.add_item("3+")
 
-func _load_dummy_cards() -> void:
-	cards = [
-		{"name":"Golpe", "type":"Ataque", "rarity":"Común", "cost":1, "desc":"Inflige 6 de daño."},
-		{"name":"Defensa", "type":"Defensa", "rarity":"Común", "cost":1, "desc":"Obtén 5 de bloque."},
-		{"name":"Cuchillada Goblin", "type":"Ataque", "rarity":"Rara", "cost":2, "desc":"Inflige 10 de daño. Aplica 1 Vulnerable."},
-		{"name":"Pisotón", "type":"Ataque", "rarity":"Común", "cost":2, "desc":"Inflige 8 de daño."},
-		{"name":"Camuflaje", "type":"Habilidad", "rarity":"Épica", "cost":1, "desc":"Gana 2 Sigilo."},
-		{"name":"Trampa de madera", "type":"Habilidad", "rarity":"Rara", "cost":0, "desc":"Aplica 2 Debilitado."},
-		{"name":"Escudo improvisado", "type":"Defensa", "rarity":"Rara", "cost":2, "desc":"Obtén 12 de bloque."},
-		{"name":"Furia verde", "type":"Habilidad", "rarity":"Épica", "cost":3, "desc":"Gana 2 Fuerza."},
-	]
+
+func _load_from_db() -> void:
+	# Biblioteca de jugador: por defecto solo cartas "disponibles"
+	cards = Database.query("""
+		SELECT id_carta, nombre, descripcion, tipo, coste_energia, rareza, disponible
+		FROM carta
+		WHERE disponible = 1
+		ORDER BY id_carta;
+	""")
+
 
 func _apply_filters() -> void:
 	var q := search_edit.text.strip_edges().to_lower()
 
-	var type_selected := type_filter.get_item_text(type_filter.selected)
-	var rarity_selected := rarity_filter.get_item_text(rarity_filter.selected)
+	var type_selected_ui := type_filter.get_item_text(type_filter.selected)
+	var rarity_selected_ui := rarity_filter.get_item_text(rarity_filter.selected)
 	var cost_selected := cost_filter.get_item_text(cost_filter.selected)
 
 	filtered_cards = []
 	for c in cards:
-		if q != "" and String(c["name"]).to_lower().find(q) == -1:
+		var nombre := String(c.get("nombre", ""))
+
+		if q != "" and nombre.to_lower().find(q) == -1:
 			continue
 
 		# Tipo
-		if type_selected != "Tipo: Todos" and c["type"] != type_selected:
-			continue
+		if type_selected_ui != "Tipo: Todos":
+			var tipo_db := String(c.get("tipo", ""))
+			var tipo_expected := String(TYPE_UI_TO_DB.get(type_selected_ui, ""))
+			if tipo_expected == "" or tipo_db != tipo_expected:
+				continue
 
 		# Rareza
-		if rarity_selected != "Rareza: Todas" and c["rarity"] != rarity_selected:
-			continue
+		if rarity_selected_ui != "Rareza: Todas":
+			var rareza_db := String(c.get("rareza", ""))
+			var rareza_expected := String(RARITY_UI_TO_DB.get(rarity_selected_ui, ""))
+			if rareza_expected == "" or rareza_db != rareza_expected:
+				continue
 
 		# Coste
 		if cost_selected != "Coste: Todos":
-			if cost_selected == "3+" and int(c["cost"]) < 3:
+			var cost := int(c.get("coste_energia", 0))
+			if cost_selected == "3+" and cost < 3:
 				continue
-			elif cost_selected != "3+" and int(c["cost"]) != int(cost_selected):
+			elif cost_selected != "3+" and cost != int(cost_selected):
 				continue
 
 		filtered_cards.append(c)
 
 	_rebuild_grid()
+
 
 func _rebuild_grid() -> void:
 	# Limpiar hijos
@@ -104,25 +143,36 @@ func _rebuild_grid() -> void:
 
 	# Rellenar
 	for i in range(filtered_cards.size()):
-		var c = filtered_cards[i]
+		var c: Dictionary = filtered_cards[i]
 		var card_view = CARD_VIEW_SCENE.instantiate()
 		grid_cards.add_child(card_view)
 
 		# Ajuste visual para biblioteca
 		card_view.custom_minimum_size = Vector2(200, 160)
 		card_view.size_flags_horizontal = Control.SIZE_FILL
-		card_view.size_flags_vertical = 0
 		card_view.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
-		card_view.set_card_data(c["name"], int(c["cost"]), c["desc"])
+		var nombre := String(c.get("nombre", ""))
+		var coste := int(c.get("coste_energia", 0))
+		var desc := String(c.get("descripcion", ""))
+
+		card_view.set_card_data(nombre, coste, desc)
 		card_view.pressed.connect(func(): _select_card(c))
 
+
 func _select_card(c: Dictionary) -> void:
-	detail_name.text = "Carta: %s" % c["name"]
-	detail_type.text = "Tipo: %s" % c["type"]
-	detail_cost.text = "Coste: %d" % int(c["cost"])
-	detail_rarity.text = "Rareza: %s" % c["rarity"]
-	detail_desc.text = c["desc"]
+	var nombre := String(c.get("nombre", ""))
+	var tipo_db := String(c.get("tipo", ""))
+	var rareza_db := String(c.get("rareza", ""))
+	var coste := int(c.get("coste_energia", 0))
+	var desc := String(c.get("descripcion", ""))
+
+	detail_name.text = "Carta: %s" % nombre
+	detail_type.text = "Tipo: %s" % String(TYPE_DB_TO_UI.get(tipo_db, tipo_db))
+	detail_cost.text = "Coste: %d" % coste
+	detail_rarity.text = "Rareza: %s" % String(RARITY_DB_TO_UI.get(rareza_db, rareza_db))
+	detail_desc.text = desc
+
 
 func _clear_filters() -> void:
 	search_edit.text = ""
@@ -130,6 +180,7 @@ func _clear_filters() -> void:
 	rarity_filter.select(0)
 	cost_filter.select(0)
 	_apply_filters()
+
 
 func _back() -> void:
 	get_tree().change_scene_to_file("res://src/scenes/menu/MainMenu.tscn")
