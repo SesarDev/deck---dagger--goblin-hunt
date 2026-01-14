@@ -8,8 +8,6 @@ func get_all() -> Array:
 		ORDER BY id_enemigo;
 	""")
 
-
-
 func get_by_id(id_enemigo: int) -> Dictionary:
 	var rows := Database.query("SELECT * FROM enemigo WHERE id_enemigo = %d;" % id_enemigo)
 	return rows[0] if rows.size() > 0 else {}
