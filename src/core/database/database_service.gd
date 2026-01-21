@@ -131,6 +131,7 @@ func apply_migrations() -> void:
 		"res://data/db/migrations/003_reseed_cards_and_achievements.sql",
 		"res://data/db/migrations/004_add_enemy_type.sql",
 		"res://data/db/migrations/005_add_enemy_imagen.sql",
+		"res://data/db/migrations/006_add_card_imagen.sql",
 	]
 
 	for path in migrations:

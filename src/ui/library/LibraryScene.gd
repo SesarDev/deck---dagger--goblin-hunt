@@ -88,11 +88,12 @@ func _init_filters() -> void:
 func _load_from_db() -> void:
 	# Biblioteca de jugador: por defecto solo cartas "disponibles"
 	cards = Database.query("""
-		SELECT id_carta, nombre, descripcion, tipo, coste_energia, rareza, disponible
-		FROM carta
-		WHERE disponible = 1
-		ORDER BY id_carta;
-	""")
+	SELECT id_carta, nombre, descripcion, tipo, coste_energia, rareza, disponible, imagen, fondo
+	FROM carta
+	WHERE disponible = 1
+	ORDER BY id_carta;
+""")
+
 
 
 func _apply_filters() -> void:
@@ -152,20 +153,26 @@ func _rebuild_grid() -> void:
 		card_view.size_flags_horizontal = Control.SIZE_FILL
 		card_view.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
-		var nombre := String(c.get("nombre", ""))
 		var coste := int(c.get("coste_energia", 0))
-		var desc := String(c.get("descripcion", ""))
+		
+		var nombre := str(c.get("nombre", ""))
+		var desc := str(c.get("descripcion", ""))
+		var img := str(c.get("imagen", ""))
+		var bg := str(c.get("fondo", ""))
 
-		card_view.set_card_data(nombre, coste, desc)
+
+		card_view.set_card_data(nombre, coste, desc, img, bg)
+
 		card_view.pressed.connect(func(): _select_card(c))
 
 
 func _select_card(c: Dictionary) -> void:
-	var nombre := String(c.get("nombre", ""))
-	var tipo_db := String(c.get("tipo", ""))
-	var rareza_db := String(c.get("rareza", ""))
+	var nombre := str(c.get("nombre", ""))
+	var tipo_db := str(c.get("tipo", ""))
+	var rareza_db := str(c.get("rareza", ""))
+	var desc := str(c.get("descripcion", ""))
+
 	var coste := int(c.get("coste_energia", 0))
-	var desc := String(c.get("descripcion", ""))
 
 	detail_name.text = "Carta: %s" % nombre
 	detail_type.text = "Tipo: %s" % String(TYPE_DB_TO_UI.get(tipo_db, tipo_db))

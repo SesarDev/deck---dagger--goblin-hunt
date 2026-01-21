@@ -24,7 +24,8 @@ var combat := CombatManager.new()
 
 func _ready() -> void:
 	randomize()
-
+	
+	
 	_connect_signals()
 
 	combat.state_changed.connect(_refresh_ui)
@@ -70,14 +71,19 @@ func _refresh_ui() -> void:
 		if i < combat.player.hand.size():
 			var c := combat.player.hand[i]
 			btn.disabled = false
-			(btn as Button).set_card_data(
-				String(c["nombre"]),
-				int(c["coste_energia"]),
-				String(c["descripcion"])
-			)
+
+			var nombre := str(c.get("nombre", ""))
+			var coste := int(c.get("coste_energia", 0))
+			var desc := str(c.get("descripcion", ""))
+
+			var img := str(c.get("imagen", ""))
+			var bg := str(c.get("fondo", ""))
+
+			(btn as Button).set_card_data(nombre, coste, desc, img, bg)
 		else:
 			btn.disabled = true
-			(btn as Button).set_card_data("-", 0, "")
+			(btn as Button).set_card_data("-", 0, "", "", "")
+
 
 
 func _on_card_played(hand_index: int) -> void:

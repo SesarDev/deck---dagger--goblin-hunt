@@ -19,8 +19,7 @@ func _ready() -> void:
 	btn_salir.pressed.connect(_on_btn_salir_pressed)
 	btn_profile.pressed.connect(_on_profile_pressed)
 	ProgressionService.new().refresh_all_unlocks(1)
-	
-	print(Database.query("SELECT id_enemigo, nombre, vida_base, dano_base, recompensa_xp, tipo FROM enemigo ORDER BY id_enemigo;"))
+
 
 	btn_continuar.disabled = not FileAccess.file_exists(GameState.SAVE_PATH)
 

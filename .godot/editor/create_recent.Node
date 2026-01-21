@@ -1,14 +1,14 @@
 TextureRect
+HBoxContainer
+VBoxContainer
 OptionButton
 AnimationPlayer
 Control
 CanvasLayer
 Button
-VBoxContainer
 Panel
 Label
 MarginContainer
 SpinBox
-HBoxContainer
 TextEdit
 LineEdit

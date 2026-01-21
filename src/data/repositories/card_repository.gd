@@ -3,7 +3,7 @@ class_name CardRepository
 
 func get_all() -> Array:
 	return Database.query("""
-		SELECT id_carta, nombre, descripcion, tipo, coste_energia, valor_base, rareza, disponible
+		SELECT id_carta, nombre, descripcion, tipo, coste_energia, valor_base, rareza, disponible, imagen, fondo
 		FROM carta
 		ORDER BY id_carta;
 	""")
@@ -14,8 +14,8 @@ func get_by_id(id_carta: int) -> Dictionary:
 
 func create(card: Dictionary) -> void:
 	var sql := """
-		INSERT INTO carta (nombre, descripcion, tipo, coste_energia, valor_base, rareza, disponible)
-		VALUES ('%s','%s','%s',%d,%d,'%s',%d);
+		INSERT INTO carta (nombre, descripcion, tipo, coste_energia, valor_base, rareza, disponible, imagen, fondo)
+		VALUES ('%s','%s','%s',%d,%d,'%s',%d,'%s','%s');
 	""" % [
 		_escape(card.get("nombre", "")),
 		_escape(card.get("descripcion", "")),
@@ -23,7 +23,9 @@ func create(card: Dictionary) -> void:
 		int(card.get("coste_energia", 1)),
 		int(card.get("valor_base", 0)),
 		_escape(card.get("rareza", "COMUN")),
-		int(card.get("disponible", 1))
+		int(card.get("disponible", 1)),
+		_escape(card.get("imagen", "")),
+		_escape(card.get("fondo", "")),
 	]
 	Database.execute(sql)
 
@@ -36,7 +38,9 @@ func update(id_carta: int, card: Dictionary) -> void:
 			coste_energia=%d,
 			valor_base=%d,
 			rareza='%s',
-			disponible=%d
+			disponible=%d,
+			imagen='%s',
+			fondo='%s'
 		WHERE id_carta=%d;
 	""" % [
 		_escape(card.get("nombre", "")),
@@ -46,6 +50,8 @@ func update(id_carta: int, card: Dictionary) -> void:
 		int(card.get("valor_base", 0)),
 		_escape(card.get("rareza", "COMUN")),
 		int(card.get("disponible", 1)),
+		_escape(card.get("imagen", "")),
+		_escape(card.get("fondo", "")),
 		id_carta
 	]
 	Database.execute(sql)
@@ -54,5 +60,4 @@ func delete(id_carta: int) -> void:
 	Database.execute("DELETE FROM carta WHERE id_carta = %d;" % id_carta)
 
 func _escape(value: String) -> String:
-	# Escape básico para comillas simples en SQL
 	return value.replace("'", "''")
