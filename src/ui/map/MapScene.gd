@@ -63,6 +63,7 @@ func _ready() -> void:
 	_set_all_locked(true)
 	_set_locked(current_node_id, false)
 	_refresh_unlocks_from_current()
+	print("[MAP] run_id al entrar al mapa =", GameState.run_id)
 
 
 # ------------------------------------------------------
@@ -417,17 +418,19 @@ func _col_from_id(id: String) -> int:
 
 # GENERAR Y GUARDAR
 func _generate_new_map_and_save_state() -> void:
-	# Seed estable para toda la run
-	var run_seed: int = int(Time.get_unix_time_from_system()) ^ randi()
+	var keep_run_id := GameState.run_id   # 👈 guardamos la run real
 
+	var run_seed: int = int(Time.get_unix_time_from_system()) ^ randi()
 	GameState.new_run(run_seed, columns)
-	seed(run_seed) # fija RNG para que todo sea determinista durante la creación
+
+	GameState.run_id = keep_run_id        # 👈 la restauramos
+
+	seed(run_seed)
 
 	_build_columns_nodes_dynamic_counts(true)
 	_assign_node_types_by_probability()
 	_generate_connections_random()
 
-	# Persistimos snapshot completo
 	GameState.current_node_id = "1-1"
 	GameState.cleared.clear()
 	for id in nodes_by_id.keys():
@@ -439,17 +442,8 @@ func _generate_new_map_and_save_state() -> void:
 
 	GameState.adjacency = _deep_copy_adjacency(adjacency)
 
-	# Elegir 1 jefe para esta run y guardarlo en GameState (si aún no hay uno)
-	# AJUSTE: la tabla probablemente es "enemigo" (singular). Cambia si en tu BD es "enemigos".
-	if GameState.boss_enemy_id <= 0:
-		var boss_rows := Database.query("SELECT id_enemigo FROM enemigo WHERE tipo = 'Jefe' ORDER BY RANDOM() LIMIT 1;")
-		if boss_rows.size() > 0:
-			GameState.boss_enemy_id = int(boss_rows[0]["id_enemigo"])
-		else:
-			GameState.boss_enemy_id = -1
-
-	# Guarda inmediatamente el snapshot, incluido boss_enemy_id
 	GameState.save_to_disk()
+
 
 
 func _restore_map_from_state() -> void:

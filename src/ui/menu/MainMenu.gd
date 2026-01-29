@@ -44,8 +44,9 @@ func _on_btn_continue_pressed() -> void:
 
 
 func _on_btn_jugar_pressed() -> void:
-	Database.execute("INSERT INTO starter_deck(card_id, copies) VALUES (1, 5);")
-	print(Database.query("SELECT * FROM starter_deck;"))
+	GameState.run_id = Database.create_run()
+	print("[MENU] run_id creado =", GameState.run_id)
+	print("[MENU] run_deck_card =", Database.query("SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % GameState.run_id))
 
 
 	# 1) Inicializa estado del mapa

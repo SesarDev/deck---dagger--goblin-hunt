@@ -1,3 +1,8 @@
 res://src/scenes/events/EventScene.tscn
 res://src/ui/common/DeckTheme.tres
 res://src/core/database/database_service.gd
+res://src/ui/menu/MainMenu.gd
+res://src/core/combat/CombatManager.gd
+res://src/ui/map/MapScene.gd
+res://src/scenes/combat/CombatScene.tscn
+res://src/ui/combat/CombatScene.gd

@@ -1,3 +1,4 @@
+Label
 TextureRect
 HBoxContainer
 VBoxContainer
@@ -7,7 +8,6 @@ Control
 CanvasLayer
 Button
 Panel
-Label
 MarginContainer
 SpinBox
 TextEdit

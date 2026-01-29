@@ -112,6 +112,7 @@ func execute(sql: String) -> void:
 
 
 func query(sql: String) -> Array:
+
 	if not is_open:
 		push_error("[DB] query(): BD no abierta")
 		return []
@@ -192,17 +193,21 @@ func create_run() -> int:
 
 
 func _populate_starter_deck(run_id: int) -> void:
-	var rows := query("SELECT card_id, copies FROM starter_deck;")
+	# Si ya hay cartas para esta run, NO volver a poblar
+	var already: Array = query("SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % run_id)
+	if already.size() > 0 and int(already[0].get("n", 0)) > 0:
+		print("[RUN] run_deck_card ya poblado para run_id=", run_id, " -> skip")
+		return
+
+	var rows: Array = query("SELECT card_id, copies FROM starter_deck;")
 
 	for row in rows:
-		var card_id := int(row.get("card_id", 0))
-		var copies := int(row.get("copies", 0))
+		var card_id: int = int((row as Dictionary).get("card_id", 0))
+		var copies: int = int((row as Dictionary).get("copies", 0))
 
-		for i in range(copies):
-			execute("""
-				INSERT INTO run_deck_card (run_id, card_id)
-				VALUES (%d, %d);
-			""" % [run_id, card_id])
+		for _i in range(copies):
+			execute("INSERT INTO run_deck_card (run_id, card_id) VALUES (%d, %d);" % [run_id, card_id])
+
 
 func ensure_starter_deck_seeded() -> void:
 	var rows := query("SELECT COUNT(*) AS n FROM starter_deck;")

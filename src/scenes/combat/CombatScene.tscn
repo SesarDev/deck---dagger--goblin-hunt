@@ -147,6 +147,11 @@ layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
+[node name="LblDeckCount" type="Label" parent="VBoxRoot/HBoxActions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Mazo: 5 cartas"
+
 [node name="BtnEndTurn" type="Button" parent="VBoxRoot/HBoxActions"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -156,3 +161,8 @@ text = "Fin de turno"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Volver al mapa"
+
+[node name="LblDiscardCount" type="Label" parent="VBoxRoot/HBoxActions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Descarte: 4 Cartas"

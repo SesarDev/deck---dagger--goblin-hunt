@@ -16,15 +16,22 @@ extends Control
 @onready var card_4: Button = $VBoxRoot/HBoxHand/Card_4
 @onready var card_5: Button = $VBoxRoot/HBoxHand/Card_5
 
+@onready var lbl_deck_count: Label = %LblDeckCount
+#@onready var lbl_hand_count: Label = %LblHandCount
+@onready var lbl_discard_count: Label = %LblDiscardCount
+
 @onready var btn_end_turn: Button = $VBoxRoot/HBoxActions/BtnEndTurn
 @onready var btn_back_to_map: Button = $VBoxRoot/HBoxActions/BtnBackToMap
 
 var combat := CombatManager.new()
-
+var _started := false
 
 func _ready() -> void:
 	randomize()
-	
+	if _started:
+		return
+	_started = true
+
 	
 	_connect_signals()
 
@@ -83,6 +90,11 @@ func _refresh_ui() -> void:
 		else:
 			btn.disabled = true
 			(btn as Button).set_card_data("-", 0, "", "", "")
+	
+	# Contadores de cartas
+	lbl_deck_count.text = "Mazo: %d" % combat.player.deck.size()
+	#lbl_hand_count.text = "Mano: %d" % combat.player.hand.size()
+	lbl_discard_count.text = "Usadas: %d" % combat.player.discard.size()
 
 
 
