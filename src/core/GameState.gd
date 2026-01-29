@@ -3,6 +3,9 @@ extends Node
 # Identifica si hay partida en curso
 var run_active: bool = false
 
+# ID de la run activa en SQLite (mazo, oro, hp, etc.)
+var run_id: int = -1
+
 # RNG estable para que no cambie nada entre cargas (alternativa al snapshot completo)
 var map_seed: int = 0
 
@@ -28,6 +31,7 @@ func new_run(seed: int, columns: int) -> void:
 	run_active = true
 	map_seed = seed
 	map_columns = columns
+	run_id = -1
 
 	nodes_per_column.clear()
 	node_types.clear()
@@ -40,6 +44,7 @@ func new_run(seed: int, columns: int) -> void:
 
 func clear_run() -> void:
 	run_active = false
+	run_id = -1
 
 	nodes_per_column.clear()
 	node_types.clear()
@@ -56,6 +61,7 @@ const SAVE_PATH := "user://savegame.json"
 func save_to_disk() -> void:
 	var data := {
 		"run_active": run_active,
+		"run_id": run_id,
 		"map_seed": map_seed,
 		"map_columns": map_columns,
 		"nodes_per_column": nodes_per_column,
@@ -100,6 +106,8 @@ func load_from_disk() -> bool:
 	var data: Dictionary = json.data
 
 	run_active = bool(data.get("run_active", false))
+	run_id = int(data.get("run_id", -1))
+
 	map_seed = int(data.get("map_seed", 0))
 	map_columns = int(data.get("map_columns", 8))
 
@@ -115,5 +123,10 @@ func load_from_disk() -> bool:
 	current_node_id = String(data.get("current_node_id", "1-1"))
 
 	boss_enemy_id = int(data.get("boss_enemy_id", -1))
+
+	# Si run_active es true pero run_id es inválido, consideramos save inconsistente
+	if run_active and run_id < 0:
+		push_error("Save inconsistente: run_active=true pero run_id=-1")
+		return false
 
 	return run_active

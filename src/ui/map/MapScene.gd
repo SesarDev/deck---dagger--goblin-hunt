@@ -51,7 +51,7 @@ func _ready() -> void:
 		_restore_map_from_state()
 	else:
 		_generate_new_map_and_save_state()
-
+	
 	_draw_connections()
 	_connect_node_signals()
 

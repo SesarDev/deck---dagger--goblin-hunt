@@ -28,30 +28,35 @@ func start_combat(enemy_id: int = -1) -> void:
 
 	enemy.load_from_row(enemy_row)
 
-	# 2) Preparar mazo inicial desde usuario_carta (MVP: usuario 1 = admin)
+	# 2) Preparar mazo desde la RUN (run_deck_card)
 	player.deck.clear()
 
-	var user_id: int = 1 # TODO: reemplazar por perfil activo
-	var rows := Database.query("""
-		SELECT c.*
-		FROM usuario_carta uc
-		JOIN carta c ON c.id_carta = uc.id_carta
-		WHERE uc.id_usuario = %d AND uc.desbloqueada = 1 AND c.disponible = 1
-		ORDER BY c.id_carta;
-	""" % user_id)
+	if GameState.run_id < 0:
+		push_error("[COMBAT] run_id inválido. ¿Has creado/cargado la run antes de entrar a combate?")
+	else:
+		var rows := Database.query("""
+			SELECT c.*
+			FROM run_deck_card rdc
+			JOIN carta c ON c.id_carta = rdc.card_id
+			WHERE rdc.run_id = %d
+			ORDER BY rdc.id;
+		""" % GameState.run_id)
 
-	for r in rows:
-		player.deck.append(r)
+		for r in rows:
+			player.deck.append(r)
 
-	# Fallback por si el usuario no tiene cartas desbloqueadas
+	# Fallback si la run no tiene cartas (por si starter_deck está vacío o BD sin migración)
 	if player.deck.is_empty():
-		rows = Database.query("SELECT * FROM carta WHERE disponible = 1 ORDER BY id_carta LIMIT 5;")
-		for r2 in rows:
+		push_error("[COMBAT] Deck de la run vacío. Fallback a cartas disponibles.")
+		var rows2 := Database.query("SELECT * FROM carta WHERE disponible = 1 ORDER BY id_carta LIMIT 10;")
+		for r2 in rows2:
 			player.deck.append(r2)
+
 
 	_shuffle(player.deck)
 	player.hand.clear()
 	player.discard.clear()
+
 
 	# 3) Primer turno
 	start_player_turn()

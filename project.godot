@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Database="*res://src/core/database/database_service.gd"
 GameState="*res://src/core/GameState.gd"
+DeckManager="*res://src/systems/deck/DeckManager.gd"
 
 [display]
 

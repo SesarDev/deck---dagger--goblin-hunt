@@ -15,6 +15,7 @@ func _ready() -> void:
 	ensure_schema_applied()
 	ensure_seed_applied()
 	apply_migrations()
+	ensure_starter_deck_seeded()
 
 
 func _initialize_database() -> void:
@@ -104,6 +105,10 @@ func execute(sql: String) -> void:
 		push_error("[DB] execute(): BD no abierta")
 		return
 	db.query(sql)
+	if db.error_message != "" and db.error_message != "not an error":
+		print("[DB][ERR] ", db.error_message, " | SQL: ", sql)
+
+
 
 
 func query(sql: String) -> Array:
@@ -111,7 +116,11 @@ func query(sql: String) -> Array:
 		push_error("[DB] query(): BD no abierta")
 		return []
 	db.query(sql)
+	if db.error_message != "" and db.error_message != "not an error":
+		print("[DB][ERR] ", db.error_message, " | SQL: ", sql)
+
 	return db.query_result
+
 
 
 func close() -> void:
@@ -132,6 +141,10 @@ func apply_migrations() -> void:
 		"res://data/db/migrations/004_add_enemy_type.sql",
 		"res://data/db/migrations/005_add_enemy_imagen.sql",
 		"res://data/db/migrations/006_add_card_imagen.sql",
+		"res://data/db/migrations/007_run_and_starter_deck.sql",
+		"res://data/db/migrations/008_seed_starter_deck.sql",
+		"res://data/db/migrations/009_fix_seed_starter_deck.sql",
+
 	]
 
 	for path in migrations:
@@ -149,6 +162,70 @@ func apply_migrations() -> void:
 func _migration_applied(name: String) -> bool:
 	var rows := query("SELECT name FROM schema_migrations WHERE name='%s' LIMIT 1;" % _escape_sql(name))
 	return rows.size() > 0
+
+
+# =====================================================
+#  RUNS Y MAZO DE LA RUN
+# =====================================================
+
+func create_run() -> int:
+	print("[RUN] starter_deck rows:", query("SELECT * FROM starter_deck;"))
+
+	var run_id := get_last_insert_id()
+	print("[RUN] run_id:", run_id)
+
+	_populate_starter_deck(run_id)
+
+	print("[RUN] run_deck_card count:", query("SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % run_id))
+
+	var seed := randi()
+	execute("""
+		INSERT INTO run (seed, gold, hp, max_hp)
+		VALUES (%d, 50, 100, 100);
+	""" % seed)
+
+	_populate_starter_deck(run_id)
+	return run_id
+	var r := query("SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % run_id)
+
+
+
+func _populate_starter_deck(run_id: int) -> void:
+	var rows := query("SELECT card_id, copies FROM starter_deck;")
+
+	for row in rows:
+		var card_id := int(row.get("card_id", 0))
+		var copies := int(row.get("copies", 0))
+
+		for i in range(copies):
+			execute("""
+				INSERT INTO run_deck_card (run_id, card_id)
+				VALUES (%d, %d);
+			""" % [run_id, card_id])
+
+func ensure_starter_deck_seeded() -> void:
+	var rows := query("SELECT COUNT(*) AS n FROM starter_deck;")
+	if rows.size() > 0 and int(rows[0].get("n", 0)) > 0:
+		return
+
+	execute("DELETE FROM starter_deck;")
+	execute("INSERT INTO starter_deck(card_id, copies) VALUES (1, 5);")
+	execute("INSERT INTO starter_deck(card_id, copies) VALUES (4, 4);")
+	execute("INSERT INTO starter_deck(card_id, copies) VALUES (6, 1);")
+
+	print("[DB] starter_deck sembrado por código.")
+
+
+
+# =====================================================
+#  UTILIDADES
+# =====================================================
+
+func get_last_insert_id() -> int:
+	var rows := query("SELECT last_insert_rowid() AS id;")
+	if rows.size() > 0:
+		return int(rows[0]["id"])
+	return -1
 
 
 func _escape_sql(s: String) -> String:

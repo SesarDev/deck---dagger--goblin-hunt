@@ -1,11 +1,20 @@
 extends Node
 
+var deck: Array = []
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
+func load_run_deck(run_id: int) -> void:
+	deck.clear()
 
+	if run_id < 0:
+		push_error("[DeckManager] load_run_deck: run_id inválido")
+		return
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+	var rows := Database.query("""
+		SELECT rdc.id AS run_card_id, rdc.upgraded, c.*
+		FROM run_deck_card rdc
+		JOIN carta c ON c.id_carta = rdc.card_id
+		WHERE rdc.run_id = %d;
+	""" % run_id)
+
+	for row in rows:
+		deck.append(row)
