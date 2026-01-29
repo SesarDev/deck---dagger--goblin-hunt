@@ -26,6 +26,12 @@ extends Control
 var combat := CombatManager.new()
 var _started := false
 
+@export var card_view_scene: PackedScene
+var reward_service := RewardService.new()
+var _reward_choices: Array = []
+var _pending_xp: int = 0
+var _pending_enemy_name: String = ""
+
 func _ready() -> void:
 	randomize()
 	if _started:
@@ -118,7 +124,10 @@ func _on_combat_ended(victory: bool, xp_gained: int, enemy_name: String) -> void
 
 	if victory:
 		lbl_enemy_intent.text = "VICTORIA"
-		_show_victory_reward_dialog(xp_gained, enemy_name)
+		_pending_xp = xp_gained
+		_pending_enemy_name = enemy_name
+		_show_reward_choice_dialog()
+
 	else:
 		lbl_enemy_intent.text = "DERROTA"
 		_show_defeat_dialog(enemy_name)
@@ -129,7 +138,99 @@ func _on_back_to_map_pressed() -> void:
 	# Si prefieres bloquear siempre, deja el botón deshabilitado al inicio.
 	get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")
 
+func _show_reward_choice_dialog() -> void:
+	if card_view_scene == null:
+		push_error("Reward UI: card_view_scene no asignada (arrastra CardView.tscn en el inspector).")
+		return
 
+	var user_id: int = 1
+	_reward_choices = reward_service.get_combat_reward_choices(user_id, 3)
+
+	var dlg := AcceptDialog.new()
+	dlg.title = "Recompensa"
+	dlg.dialog_text = (
+		"Has derrotado a %s.\n" % _pending_enemy_name +
+		"+%d XP\n\n" % _pending_xp +
+		"Elige 1 carta (obligatorio):"
+	)
+
+	# Elección obligatoria
+	dlg.get_ok_button().visible = false
+	dlg.close_requested.connect(func(): pass)
+	dlg.exclusive = true
+
+	add_child(dlg)
+
+	# Contenedor horizontal para 3 CardView
+	var hbox := HBoxContainer.new()
+	hbox.custom_minimum_size = Vector2(820, 260)
+	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	dlg.add_child(hbox)
+
+	for i in range(_reward_choices.size()):
+		var c: Dictionary = _reward_choices[i]
+
+		var cv := card_view_scene.instantiate() as Button
+		cv.custom_minimum_size = Vector2(260, 240)
+		hbox.add_child(cv)
+
+		# Normaliza posibles nulls de BD (evita "res://<null>")
+		var img_val = c.get("imagen", "")
+		var bg_val = c.get("fondo", "")
+		var img := "" if img_val == null else String(img_val)
+		var bg := "" if bg_val == null else String(bg_val)
+
+		# CardView.gd: set_card_data(nombre, coste, desc, imagen_path, fondo_path)
+		(cv as Button).set_card_data(
+			String(c.get("nombre", "Carta")),
+			int(c.get("coste_energia", 0)),
+			String(c.get("descripcion", "")),
+			img,
+			bg
+		)
+
+		cv.pressed.connect(func():
+			_on_reward_card_chosen(c)
+			dlg.queue_free()
+		)
+
+	dlg.popup_centered()
+
+	
+func _on_reward_card_chosen(card_row: Dictionary) -> void:
+	var run_id: int = GameState.run_id
+	if run_id <= 0:
+		push_error("Recompensa: run_id inválido")
+		return
+
+	var card_id: int = int(card_row.get("id_carta", 0))
+	if card_id <= 0:
+		push_error("Recompensa: card_id inválido")
+		return
+
+	# 1) Añadir carta al mazo de la run
+	reward_service.add_card_to_run(run_id, card_id)
+
+	# 2) Otorgar oro (ajusta cantidad como quieras)
+	var gold_reward: int = 20
+	reward_service.add_gold_to_run(run_id, gold_reward)
+
+	print("[REWARD] Añadida carta id=", card_id, " +", gold_reward, " oro (run_id=", run_id, ")")
+	
+	print(Database.query("SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % GameState.run_id))
+	print(Database.query("SELECT gold FROM run WHERE id=%d;" % GameState.run_id))
+
+	_finish_combat_and_return_to_map()
+
+
+func _finish_combat_and_return_to_map() -> void:
+	var cur_id := GameState.current_node_id
+	GameState.cleared[cur_id] = true
+	GameState.save_to_disk()
+	get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")
+
+#CODIGO ANTIGÜO
 func _show_victory_reward_dialog(xp_gained: int, enemy_name: String) -> void:
 	var dlg := AcceptDialog.new()
 	dlg.title = "Recompensa"

@@ -6,3 +6,4 @@ res://src/core/combat/CombatManager.gd
 res://src/ui/map/MapScene.gd
 res://src/scenes/combat/CombatScene.tscn
 res://src/ui/combat/CombatScene.gd
+res://src/services/RewardServices.gd

@@ -16,6 +16,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_r7md3")
 script = ExtResource("2_txe4k")
+card_view_scene = ExtResource("2_74lw3")
 
 [node name="BaseScene" parent="." instance=ExtResource("3_ikysq")]
 layout_mode = 1
