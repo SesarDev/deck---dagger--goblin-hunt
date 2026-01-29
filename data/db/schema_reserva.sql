@@ -1,13 +1,8 @@
 PRAGMA foreign_keys = ON;
 
--- =====================================================
--- ESQUEMA CONSOLIDADO (schema.sql + migraciones 001..007 + 006)
--- Deck & Dagger - Goblin Hunt
--- =====================================================
-
--- -------------------------
--- Tablas principales
--- -------------------------
+-- =========================
+-- TABLAS PRINCIPALES
+-- =========================
 
 CREATE TABLE IF NOT EXISTS usuario (
     id_usuario      INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,10 +13,10 @@ CREATE TABLE IF NOT EXISTS usuario (
 );
 
 CREATE TABLE IF NOT EXISTS progreso_usuario (
-    id_progreso          INTEGER PRIMARY KEY AUTOINCREMENT,
-    id_usuario           INTEGER NOT NULL UNIQUE,
-    nivel                INTEGER NOT NULL DEFAULT 1 CHECK (nivel >= 1),
-    experiencia          INTEGER NOT NULL DEFAULT 0 CHECK (experiencia >= 0),
+    id_progreso         INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_usuario          INTEGER NOT NULL UNIQUE,
+    nivel               INTEGER NOT NULL DEFAULT 1 CHECK (nivel >= 1),
+    experiencia         INTEGER NOT NULL DEFAULT 0 CHECK (experiencia >= 0),
     fecha_ultima_partida TEXT,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
         ON DELETE CASCADE
@@ -38,9 +33,7 @@ CREATE TABLE IF NOT EXISTS carta (
     valor_base      INTEGER NOT NULL DEFAULT 0 CHECK (valor_base >= 0),
     rareza          TEXT NOT NULL DEFAULT 'COMUN'
         CHECK (rareza IN ('COMUN','RARO','EPICO','LEGENDARIO')),
-    disponible      INTEGER NOT NULL DEFAULT 1 CHECK (disponible IN (0,1)),
-    imagen          TEXT NOT NULL DEFAULT '',
-    fondo           TEXT NOT NULL DEFAULT ''
+    disponible      INTEGER NOT NULL DEFAULT 1 CHECK (disponible IN (0,1))
 );
 
 CREATE TABLE IF NOT EXISTS enemigo (
@@ -51,9 +44,10 @@ CREATE TABLE IF NOT EXISTS enemigo (
     dano_base       INTEGER NOT NULL DEFAULT 1 CHECK (dano_base >= 0),
     recompensa_xp   INTEGER NOT NULL DEFAULT 5 CHECK (recompensa_xp >= 0),
     disponible      INTEGER NOT NULL DEFAULT 1 CHECK (disponible IN (0,1)),
-    tipo            TEXT NOT NULL DEFAULT 'Normal',
+    tipo            TEXT NOT NULL DEFAULT 'NORMAL',
     imagen          TEXT NOT NULL DEFAULT ''
 );
+
 
 CREATE TABLE IF NOT EXISTS logro (
     id_logro        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,13 +57,13 @@ CREATE TABLE IF NOT EXISTS logro (
     disponible      INTEGER NOT NULL DEFAULT 1 CHECK (disponible IN (0,1))
 );
 
--- -------------------------
--- Tablas puente
--- -------------------------
+-- =========================
+-- TABLAS PUENTE (N:M)
+-- =========================
 
 CREATE TABLE IF NOT EXISTS usuario_carta (
-    id_usuario   INTEGER NOT NULL,
-    id_carta     INTEGER NOT NULL,
+    id_usuario  INTEGER NOT NULL,
+    id_carta    INTEGER NOT NULL,
     desbloqueada INTEGER NOT NULL DEFAULT 0 CHECK (desbloqueada IN (0,1)),
     PRIMARY KEY (id_usuario, id_carta),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
@@ -81,9 +75,9 @@ CREATE TABLE IF NOT EXISTS usuario_carta (
 );
 
 CREATE TABLE IF NOT EXISTS usuario_logro (
-    id_usuario      INTEGER NOT NULL,
-    id_logro        INTEGER NOT NULL,
-    obtenido        INTEGER NOT NULL DEFAULT 0 CHECK (obtenido IN (0,1)),
+    id_usuario  INTEGER NOT NULL,
+    id_logro    INTEGER NOT NULL,
+    obtenido    INTEGER NOT NULL DEFAULT 0 CHECK (obtenido IN (0,1)),
     fecha_obtencion TEXT,
     PRIMARY KEY (id_usuario, id_logro),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
@@ -94,57 +88,10 @@ CREATE TABLE IF NOT EXISTS usuario_logro (
         ON UPDATE CASCADE
 );
 
--- -------------------------
--- Reglas de desbloqueo (migración 001)
--- -------------------------
-
-CREATE TABLE IF NOT EXISTS carta_desbloqueo (
-    id_carta INTEGER NOT NULL,
-    tipo     TEXT NOT NULL CHECK (tipo IN ('BASE','NIVEL','LOGRO')),
-    valor    INTEGER NOT NULL DEFAULT 0,
-    PRIMARY KEY (id_carta, tipo, valor),
-    FOREIGN KEY (id_carta) REFERENCES carta(id_carta)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
-
--- -------------------------
--- Sistema de runs / mazo (migración 007) - FK CORREGIDAS
--- -------------------------
-
-CREATE TABLE IF NOT EXISTS run (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    seed       INTEGER NOT NULL,
-    floor      INTEGER DEFAULT 1,
-    gold       INTEGER DEFAULT 0,
-    hp         INTEGER DEFAULT 100,
-    max_hp     INTEGER DEFAULT 100,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS run_deck_card (
-    id       INTEGER PRIMARY KEY AUTOINCREMENT,
-    run_id   INTEGER NOT NULL,
-    card_id  INTEGER NOT NULL,
-    upgraded INTEGER DEFAULT 0,
-    FOREIGN KEY (run_id) REFERENCES run(id) ON DELETE CASCADE,
-    FOREIGN KEY (card_id) REFERENCES carta(id_carta)
-);
-
-CREATE TABLE IF NOT EXISTS starter_deck (
-    card_id INTEGER NOT NULL,
-    copies  INTEGER NOT NULL,
-    PRIMARY KEY (card_id),
-    FOREIGN KEY (card_id) REFERENCES carta(id_carta)
-);
-
--- -------------------------
--- Índices
--- -------------------------
+-- =========================
+-- ÍNDICES RECOMENDADOS
+-- =========================
 
 CREATE INDEX IF NOT EXISTS idx_progreso_usuario_id_usuario ON progreso_usuario(id_usuario);
 CREATE INDEX IF NOT EXISTS idx_usuario_carta_id_carta ON usuario_carta(id_carta);
 CREATE INDEX IF NOT EXISTS idx_usuario_logro_id_logro ON usuario_logro(id_logro);
-CREATE INDEX IF NOT EXISTS idx_carta_desbloqueo_tipo_valor ON carta_desbloqueo(tipo, valor);
-CREATE INDEX IF NOT EXISTS idx_run_deck_card_run_id ON run_deck_card(run_id);
-CREATE INDEX IF NOT EXISTS idx_run_deck_card_card_id ON run_deck_card(card_id);

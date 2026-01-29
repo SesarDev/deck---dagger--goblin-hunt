@@ -135,15 +135,16 @@ func apply_migrations() -> void:
 
 	# 2) Lista de migraciones (ordenadas)
 	var migrations := [
-		"res://data/db/migrations/001_carta_desbloqueo.sql",
-		"res://data/db/migrations/002_seed_unlock_rules.sql",
-		"res://data/db/migrations/003_reseed_cards_and_achievements.sql",
-		"res://data/db/migrations/004_add_enemy_type.sql",
-		"res://data/db/migrations/005_add_enemy_imagen.sql",
-		"res://data/db/migrations/006_add_card_imagen.sql",
-		"res://data/db/migrations/007_run_and_starter_deck.sql",
-		"res://data/db/migrations/008_seed_starter_deck.sql",
-		"res://data/db/migrations/009_fix_seed_starter_deck.sql",
+		 
+		#"res://data/db/migrations/001_carta_desbloqueo.sql",
+		#"res://data/db/migrations/002_seed_unlock_rules.sql",
+		#"res://data/db/migrations/003_reseed_cards_and_achievements.sql",
+		#"res://data/db/migrations/004_add_enemy_type.sql",
+		#"res://data/db/migrations/005_add_enemy_imagen.sql",
+		#"res://data/db/migrations/006_add_card_imagen.sql",
+		#"res://data/db/migrations/007_run_and_starter_deck.sql",
+		#"res://data/db/migrations/008_seed_starter_deck.sql",
+		#"res://data/db/migrations/009_fix_seed_starter_deck.sql",
 
 	]
 
