@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://dxse0x6urk2pj"]
+[gd_scene load_steps=7 format=3 uid="uid://dxse0x6urk2pj"]
 
 [ext_resource type="Theme" uid="uid://vvgre7h62n12" path="res://src/ui/common/DeckTheme.tres" id="1_r7md3"]
 [ext_resource type="PackedScene" uid="uid://dsfwrr8geg2vx" path="res://src/ui/common/CardView.tscn" id="2_74lw3"]
 [ext_resource type="Script" uid="uid://d14u7donaepr4" path="res://src/ui/combat/CombatScene.gd" id="2_txe4k"]
+[ext_resource type="PackedScene" uid="uid://0ym48187hbte" path="res://src/scenes/combat/RewardPanel.tscn" id="3_15hlu"]
 [ext_resource type="PackedScene" uid="uid://bb05d21oqvt27" path="res://src/ui/common/BaseScene.tscn" id="3_ikysq"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ikysq"]
@@ -16,6 +17,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_r7md3")
 script = ExtResource("2_txe4k")
+reward_panel_scene = ExtResource("3_15hlu")
 card_view_scene = ExtResource("2_74lw3")
 
 [node name="BaseScene" parent="." instance=ExtResource("3_ikysq")]

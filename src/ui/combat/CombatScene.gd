@@ -23,6 +23,10 @@ extends Control
 @onready var btn_end_turn: Button = $VBoxRoot/HBoxActions/BtnEndTurn
 @onready var btn_back_to_map: Button = $VBoxRoot/HBoxActions/BtnBackToMap
 
+@export var reward_panel_scene: PackedScene
+var reward_panel: RewardPanel
+
+
 var combat := CombatManager.new()
 var _started := false
 
@@ -38,13 +42,24 @@ func _ready() -> void:
 		return
 	_started = true
 
-	
 	_connect_signals()
 
 	combat.state_changed.connect(_refresh_ui)
 	combat.combat_ended.connect(_on_combat_ended)
 
-	combat.start_combat() # enemigo aleatorio desde BD
+	# 1) Instanciar RewardPanel ANTES del combate
+	if reward_panel_scene != null:
+		reward_panel = reward_panel_scene.instantiate() as RewardPanel
+		add_child(reward_panel)
+		reward_panel.visible = false
+		reward_panel.card_chosen.connect(_on_reward_card_chosen)
+	else:
+		push_error("CombatScene: reward_panel_scene no asignada")
+		return  # <- importante: sin panel, no seguimos
+
+	# 2) Ahora sí, iniciar combate
+	combat.start_combat()
+
 
 
 func _connect_signals() -> void:
@@ -89,9 +104,10 @@ func _refresh_ui() -> void:
 			var coste := int(c.get("coste_energia", 0))
 			var desc := str(c.get("descripcion", ""))
 
-			var img := str(c.get("imagen", ""))
-			var bg := str(c.get("fondo", ""))
-
+			var img_val = c.get("imagen", "")
+			var bg_val = c.get("fondo", "")
+			var img := "" if img_val == null else String(img_val)
+			var bg := "" if bg_val == null else String(bg_val)
 			(btn as Button).set_card_data(nombre, coste, desc, img, bg)
 		else:
 			btn.disabled = true
@@ -124,9 +140,17 @@ func _on_combat_ended(victory: bool, xp_gained: int, enemy_name: String) -> void
 
 	if victory:
 		lbl_enemy_intent.text = "VICTORIA"
-		_pending_xp = xp_gained
 		_pending_enemy_name = enemy_name
-		_show_reward_choice_dialog()
+		_pending_xp = xp_gained
+
+		var gold_reward := 20
+		var cards := reward_service.get_combat_reward_choices(1, 3)
+
+		if reward_panel != null:
+			reward_panel.show_rewards(cards, _pending_xp, gold_reward)
+		else:
+			push_error("RewardPanel no instanciado")
+
 
 	else:
 		lbl_enemy_intent.text = "DERROTA"
@@ -138,66 +162,7 @@ func _on_back_to_map_pressed() -> void:
 	# Si prefieres bloquear siempre, deja el botón deshabilitado al inicio.
 	get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")
 
-func _show_reward_choice_dialog() -> void:
-	if card_view_scene == null:
-		push_error("Reward UI: card_view_scene no asignada (arrastra CardView.tscn en el inspector).")
-		return
 
-	var user_id: int = 1
-	_reward_choices = reward_service.get_combat_reward_choices(user_id, 3)
-
-	var dlg := AcceptDialog.new()
-	dlg.title = "Recompensa"
-	dlg.dialog_text = (
-		"Has derrotado a %s.\n" % _pending_enemy_name +
-		"+%d XP\n\n" % _pending_xp +
-		"Elige 1 carta (obligatorio):"
-	)
-
-	# Elección obligatoria
-	dlg.get_ok_button().visible = false
-	dlg.close_requested.connect(func(): pass)
-	dlg.exclusive = true
-
-	add_child(dlg)
-
-	# Contenedor horizontal para 3 CardView
-	var hbox := HBoxContainer.new()
-	hbox.custom_minimum_size = Vector2(820, 260)
-	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	dlg.add_child(hbox)
-
-	for i in range(_reward_choices.size()):
-		var c: Dictionary = _reward_choices[i]
-
-		var cv := card_view_scene.instantiate() as Button
-		cv.custom_minimum_size = Vector2(260, 240)
-		hbox.add_child(cv)
-
-		# Normaliza posibles nulls de BD (evita "res://<null>")
-		var img_val = c.get("imagen", "")
-		var bg_val = c.get("fondo", "")
-		var img := "" if img_val == null else String(img_val)
-		var bg := "" if bg_val == null else String(bg_val)
-
-		# CardView.gd: set_card_data(nombre, coste, desc, imagen_path, fondo_path)
-		(cv as Button).set_card_data(
-			String(c.get("nombre", "Carta")),
-			int(c.get("coste_energia", 0)),
-			String(c.get("descripcion", "")),
-			img,
-			bg
-		)
-
-		cv.pressed.connect(func():
-			_on_reward_card_chosen(c)
-			dlg.queue_free()
-		)
-
-	dlg.popup_centered()
-
-	
 func _on_reward_card_chosen(card_row: Dictionary) -> void:
 	var run_id: int = GameState.run_id
 	if run_id <= 0:
@@ -229,36 +194,6 @@ func _finish_combat_and_return_to_map() -> void:
 	GameState.cleared[cur_id] = true
 	GameState.save_to_disk()
 	get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")
-
-#CODIGO ANTIGÜO
-func _show_victory_reward_dialog(xp_gained: int, enemy_name: String) -> void:
-	var dlg := AcceptDialog.new()
-	dlg.title = "Recompensa"
-	dlg.dialog_text = (
-		"Has derrotado a %s.\n\n" % enemy_name +
-		"Recompensas:\n" +
-		"• +%d XP\n\n" % xp_gained +
-		"Pulsa Continuar para volver al mapa."
-	)
-	dlg.ok_button_text = "Continuar"
-
-	add_child(dlg)
-	dlg.popup_centered()
-
-	dlg.confirmed.connect(func():
-		var cur_id := GameState.current_node_id
-
-		# Marca el nodo como completado para desbloquear la siguiente columna
-		GameState.cleared[cur_id] = true
-
-		# Si tienes gestión de XP global, aquí es donde se aplicaría
-		# GameState.add_xp(xp_gained)
-
-		GameState.save_to_disk() # opcional, recomendable
-		dlg.queue_free()
-
-		get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")
-	)
 
 
 func _show_defeat_dialog(enemy_name: String) -> void:

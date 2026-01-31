@@ -21,7 +21,7 @@ func _ready() -> void:
 	ProgressionService.new().refresh_all_unlocks(1)
 
 	_refresh_continue_button()
-
+	
 
 func _refresh_continue_button() -> void:
 	btn_continuar.disabled = not FileAccess.file_exists(GameState.SAVE_PATH)

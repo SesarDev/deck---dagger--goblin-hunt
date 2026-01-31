@@ -24,8 +24,8 @@ func set_card_data(
 	nombre: String,
 	coste_energia: int,
 	descripcion: String,
-	imagen_path: String = "",
-	fondo_path: String = ""
+	imagen: String = "",
+	fondo: String = ""
 ) -> void:
 	lbl_cost.text = str(coste_energia)
 	lbl_name.text = nombre
@@ -34,8 +34,13 @@ func set_card_data(
 	_fit_label_text(lbl_name, 16, 10)
 	_fit_label_text(lbl_desc, 14, 9)
 
-	_set_texture_safe(bg, _pick_path(fondo_path, default_bg_path), default_bg_path)
-	_set_texture_safe(art, _pick_path(imagen_path, default_art_path), default_art_path)
+	# Fondo (siempre con fallback)
+	_set_texture_safe(bg, fondo.strip_edges(), default_bg_path)
+
+	# Arte (siempre con fallback)
+	_set_texture_safe(art, imagen.strip_edges(), default_art_path)
+
+
 
 
 func _pick_path(path: String, fallback: String) -> String:

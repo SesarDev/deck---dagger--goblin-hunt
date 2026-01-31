@@ -7,3 +7,7 @@ res://src/ui/map/MapScene.gd
 res://src/scenes/combat/CombatScene.tscn
 res://src/ui/combat/CombatScene.gd
 res://src/services/RewardServices.gd
+res://src/scenes/combat/RewardPanel.tscn
+res://src/ui/combat/RewardPanel.gd
+res://src/ui/common/CardView.tscn
+res://src/ui/common/CardView.gd
