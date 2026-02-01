@@ -42,19 +42,19 @@ DELETE FROM sqlite_sequence WHERE name IN ('carta','logro');
 
 -- 13 CARTAS
 INSERT OR IGNORE INTO carta (id_carta, nombre, descripcion, tipo, coste_energia, valor_base, rareza, disponible, imagen, fondo) VALUES
-(1,  'Golpe','Inflinge 5 de daño','ATAQUE',1,6, 'COMUN',1, '', 'res://assets/cards/golpe.png'),
-(2,  'Estocada Precisa','Inflinge 8 daño.','ATAQUE',1,  5, 'COMUN',1, '', ''),
-(3,  'Golpe Firme','Inflige 15 daño.','ATAQUE',2, 10, 'COMUN',1, '', ''),
-(4,  'Guardia','Ganas 5 bloqueo.','DEFENSA',   1,  5, 'COMUN',1, '', ''),
-(5,  'Bloqueo Total','Ganas 10 bloqueo.','DEFENSA',   2, 10, 'COMUN',1, '', ''),
-(6,  'Respirar','Recuperas vida.','HABILIDAD', 1,  3, 'COMUN',      1, '', ''),
-(7,  'Paso Atrás','Te preparas para el siguiente golpe (bloqueo).', 'DEFENSA',   1,  7, 'RARO',      1, '', ''),
-(8,  'Doble Corte','Ataque doble simplificado (daño directo).','ATAQUE',    1,  8, 'RARO',      1, '', ''),
-(9,  'Escudo Ligero','Bloqueo eficiente de bajo coste.','DEFENSA',   1,  7, 'RARO',      1, '', ''),
-(10, 'Concentración','Obtienes +1 energía.','HABILIDAD', 1,  1, 'RARO',      1, '', ''),
-(11, 'Furia Controlada','Inflige daño alto.','ATAQUE',    2, 14, 'EPICO',     1, '', ''),
-(12, 'Curación de Campamento', 'Recuperas vida con calma.','HABILIDAD', 2,  8, 'RARO',      1, '', ''),
-(13, 'Golpe Aplastante','Ataque contundente.','ATAQUE',    2, 16, 'EPICO',     1, '', '');
+(1,  'Golpe','Inflinge 6 de daño','ATAQUE',1,6, 'COMUN',1, 'res://assets/cards/golpe.png', ''),
+(2,  'Estocada Precisa','Inflinge 8 daño.','ATAQUE',1,  8, 'COMUN',1, 'res://assets/cards/estocadaprecisa.png', ''),
+(3,  'Golpe Firme','Inflige 15 daño.','ATAQUE',2, 15, 'COMUN',1, 'res://assets/cards/golpefirme.png', ''),
+(4,  'Guardia','Ganas 5 bloqueo.','DEFENSA',   1,  5, 'COMUN',1, 'res://assets/cards/guardia.png', ''),
+(5,  'Bloqueo Total','Ganas 14 bloqueo.','DEFENSA',   2, 14, 'COMUN',1, 'res://assets/cards/bloqueototal.png', ''),
+(6,  'Respirar','Recuperas 5 vida.','HABILIDAD', 1,  5, 'COMUN',      1, 'res://assets/cards/respirar.png', ''),
+-- (7,  'Paso Atrás','Te preparas para el siguiente golpe (bloqueo).', 'DEFENSA',   1,  7, 'RARO',      1, 'res://assets/cards/estocadaprecisa.png', ''),
+(8,  'Doble Corte','Ataque doble 8 daños.','ATAQUE',    1,  8, 'RARO',      1, 'res://assets/cards/doblecorte.png', ''),
+-- (9,  'Escudo Ligero','Bloqueo eficiente de bajo coste.','DEFENSA',   1,  7, 'RARO',      1, 'res://assets/cards/estocadaprecisa.png', ''),
+(10, 'Concentración','Obtienes +1 energía.','HABILIDAD', 1,  1, 'RARO',      1, 'res://assets/cards/concentracion.png', ''),
+(11, 'Furia Controlada','Inflige daño alto.','ATAQUE',    2, 14, 'EPICO',     1, 'res://assets/cards/furiacontrolada.png', ''),
+(12, 'Curación de Campamento', 'Recuperas vida con calma.','HABILIDAD', 2,  8, 'RARO',      1, 'res://assets/cards/curacioncampamento.png', ''),
+(13, 'Golpe Aplastante','Ataque contundente.','ATAQUE',    2, 16, 'EPICO',     1, 'res://assets/cards/golpeaplastante.png', '');
 
 -- 8 LOGROS
 INSERT OR IGNORE INTO logro (id_logro, nombre, descripcion, condicion, disponible) VALUES

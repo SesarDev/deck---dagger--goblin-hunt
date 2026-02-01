@@ -10,14 +10,14 @@ extends Control
 
 @onready var enemy_sprite: TextureRect = %EnemySprite
 
-@onready var card_1: Button = $VBoxRoot/HBoxHand/Card_1
-@onready var card_2: Button = $VBoxRoot/HBoxHand/Card_2
-@onready var card_3: Button = $VBoxRoot/HBoxHand/Card_3
-@onready var card_4: Button = $VBoxRoot/HBoxHand/Card_4
-@onready var card_5: Button = $VBoxRoot/HBoxHand/Card_5
+# 👇 TIPADO CORRECTO: son CardView (extiende Button)
+@onready var card_1: CardView = $VBoxRoot/HBoxHand/Card_1
+@onready var card_2: CardView = $VBoxRoot/HBoxHand/Card_2
+@onready var card_3: CardView = $VBoxRoot/HBoxHand/Card_3
+@onready var card_4: CardView = $VBoxRoot/HBoxHand/Card_4
+@onready var card_5: CardView = $VBoxRoot/HBoxHand/Card_5
 
 @onready var lbl_deck_count: Label = %LblDeckCount
-#@onready var lbl_hand_count: Label = %LblHandCount
 @onready var lbl_discard_count: Label = %LblDiscardCount
 
 @onready var btn_end_turn: Button = $VBoxRoot/HBoxActions/BtnEndTurn
@@ -25,7 +25,6 @@ extends Control
 
 @export var reward_panel_scene: PackedScene
 var reward_panel: RewardPanel
-
 
 var combat := CombatManager.new()
 var _started := false
@@ -35,6 +34,7 @@ var reward_service := RewardService.new()
 var _reward_choices: Array = []
 var _pending_xp: int = 0
 var _pending_enemy_name: String = ""
+
 
 func _ready() -> void:
 	randomize()
@@ -55,11 +55,10 @@ func _ready() -> void:
 		reward_panel.card_chosen.connect(_on_reward_card_chosen)
 	else:
 		push_error("CombatScene: reward_panel_scene no asignada")
-		return  # <- importante: sin panel, no seguimos
+		return  # sin panel, no seguimos
 
 	# 2) Ahora sí, iniciar combate
 	combat.start_combat()
-
 
 
 func _connect_signals() -> void:
@@ -91,14 +90,16 @@ func _refresh_ui() -> void:
 	else:
 		enemy_sprite.texture = null
 
-	# Mano (5 slots)
-	var slots := [card_1, card_2, card_3, card_4, card_5]
+	# Mano (5 slots fijos)
+	var slots: Array[CardView] = [card_1, card_2, card_3, card_4, card_5]
 	for i in range(slots.size()):
-		var btn: Button = slots[i]
+		var view: CardView = slots[i]
 
 		if i < combat.player.hand.size():
 			var c := combat.player.hand[i]
-			btn.disabled = false
+
+			# ✅ Asegura que si estaba "usada/negra" vuelve a normal
+			view.reset_visual()
 
 			var nombre := str(c.get("nombre", ""))
 			var coste := int(c.get("coste_energia", 0))
@@ -108,20 +109,40 @@ func _refresh_ui() -> void:
 			var bg_val = c.get("fondo", "")
 			var img := "" if img_val == null else String(img_val)
 			var bg := "" if bg_val == null else String(bg_val)
-			(btn as Button).set_card_data(nombre, coste, desc, img, bg)
+
+			view.set_card_data(nombre, coste, desc, img, bg)
 		else:
-			btn.disabled = true
-			(btn as Button).set_card_data("-", 0, "", "", "")
-	
-	# Contadores de cartas
+			# ✅ Slot vacío: negro y sin arte
+			view.disabled = true
+			view.modulate = Color(0, 0, 0, 1)
+
+			# Si quieres que el slot vacío NO muestre textos:
+			view.set_card_data("", 0, "", "", "")
+			# Si prefieres mantener "-" y "0", usa:
+			# view.set_card_data("-", 0, "", "", "")
+
+	# Contadores
 	lbl_deck_count.text = "Mazo: %d" % combat.player.deck.size()
-	#lbl_hand_count.text = "Mano: %d" % combat.player.hand.size()
 	lbl_discard_count.text = "Usadas: %d" % combat.player.discard.size()
 
 
-
 func _on_card_played(hand_index: int) -> void:
+	if hand_index < 0 or hand_index >= combat.player.hand.size():
+		return
+
+	var c := combat.player.hand[hand_index]
+	var cost := int(c.get("coste_energia", 0))
+	if combat.player.energy < cost:
+		return
+
+	var slots: Array[CardView] = [card_1, card_2, card_3, card_4, card_5]
+	var view := slots[hand_index]
+
+	#  La carta queda negra (no se mueve)
+	view.mark_as_used()
+
 	combat.play_card(hand_index)
+
 
 
 func _on_end_turn_pressed() -> void:
@@ -131,7 +152,7 @@ func _on_end_turn_pressed() -> void:
 func _on_combat_ended(victory: bool, xp_gained: int, enemy_name: String) -> void:
 	btn_end_turn.disabled = true
 
-	var slots := [card_1, card_2, card_3, card_4, card_5]
+	var slots: Array[CardView] = [card_1, card_2, card_3, card_4, card_5]
 	for b in slots:
 		b.disabled = true
 
@@ -150,16 +171,12 @@ func _on_combat_ended(victory: bool, xp_gained: int, enemy_name: String) -> void
 			reward_panel.show_rewards(cards, _pending_xp, gold_reward)
 		else:
 			push_error("RewardPanel no instanciado")
-
-
 	else:
 		lbl_enemy_intent.text = "DERROTA"
 		_show_defeat_dialog(enemy_name)
 
 
 func _on_back_to_map_pressed() -> void:
-	# Por seguridad, si el combate no ha terminado, permite salir (si lo quieres).
-	# Si prefieres bloquear siempre, deja el botón deshabilitado al inicio.
 	get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")
 
 
@@ -177,12 +194,12 @@ func _on_reward_card_chosen(card_row: Dictionary) -> void:
 	# 1) Añadir carta al mazo de la run
 	reward_service.add_card_to_run(run_id, card_id)
 
-	# 2) Otorgar oro (ajusta cantidad como quieras)
+	# 2) Otorgar oro
 	var gold_reward: int = 20
 	reward_service.add_gold_to_run(run_id, gold_reward)
 
 	print("[REWARD] Añadida carta id=", card_id, " +", gold_reward, " oro (run_id=", run_id, ")")
-	
+
 	print(Database.query("SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % GameState.run_id))
 	print(Database.query("SELECT gold FROM run WHERE id=%d;" % GameState.run_id))
 
@@ -206,8 +223,7 @@ func _show_defeat_dialog(enemy_name: String) -> void:
 	dlg.popup_centered()
 
 	dlg.confirmed.connect(func():
-		GameState.save_to_disk() # opcional
+		GameState.save_to_disk()
 		dlg.queue_free()
-
 		get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")
 	)
