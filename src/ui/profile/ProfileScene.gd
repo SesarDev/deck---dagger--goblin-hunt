@@ -55,7 +55,7 @@ func _on_profile_selected(index: int) -> void:
 
 func _play() -> void:
 	# Para la demo: ir al mapa
-	get_tree().change_scene_to_file("res://src/scenes/map/MapScene.tscn")
+	get_tree().change_scene_to_file("res://src/scenes/menu/MainMenu.tscn")
 
 func _open_admin() -> void:
 	get_tree().change_scene_to_file("res://src/scenes/admin/AdminHub.tscn")

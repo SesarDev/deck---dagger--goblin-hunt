@@ -87,6 +87,7 @@ allow_reselect = true
 
 [node name="BtnCreate" type="Button" parent="Center/PanelProfile/VBoxRoot/Body/LeftPanel/VBoxLeft"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 text = "Nuevo perfil"
 

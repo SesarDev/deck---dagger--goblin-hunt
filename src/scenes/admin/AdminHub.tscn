@@ -46,6 +46,11 @@ layout_mode = 2
 text = "ADMINISTRACIÓN"
 horizontal_alignment = 1
 
+[node name="BtnProfiles" type="Button" parent="Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Usuarios"
+
 [node name="BtnCards" type="Button" parent="Center/Panel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2

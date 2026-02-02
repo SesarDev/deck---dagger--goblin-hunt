@@ -1,3 +1,5 @@
+Button
+LineEdit
 Panel
 Container
 HBoxContainer
@@ -9,6 +11,4 @@ TextureRect
 OptionButton
 AnimationPlayer
 CanvasLayer
-Button
 MarginContainer
-SpinBox

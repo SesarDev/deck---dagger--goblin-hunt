@@ -3,6 +3,7 @@ extends Control
 @onready var btn_cards: Button = %BtnCards
 @onready var btn_enemies: Button = %BtnEnemies
 @onready var btn_back: Button = %BtnBack
+@onready var btn_profiles: Button = %BtnProfiles
 
 func _ready() -> void:
 	btn_cards.pressed.connect(func():
@@ -13,4 +14,7 @@ func _ready() -> void:
 	)
 	btn_back.pressed.connect(func():
 		get_tree().change_scene_to_file("res://src/scenes/profile/ProfileScene.tscn")
+	)
+	btn_profiles.pressed.connect(func():
+		get_tree().change_scene_to_file("res://src/scenes/admin/AdminProfiles.tscn")
 	)
