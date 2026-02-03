@@ -1,8 +1,10 @@
+res://src/core/GameState.gd
+res://src/core/combat/CombatManager.gd
+res://src/core/database/database_service.gd
+res://src/data/repositories/user_repository.gd
+res://src/ui/combat/CombatScene.gd
+res://src/ui/menu/MainMenu.gd
+res://src/ui/profile/ProfileScene.gd
+res://src/ui/shop/ShopScene.gd
 res://src/scenes/admin/AdminProfiles.tscn
 res://src/ui/common/DeckTheme.tres
-res://src/data/repositories/user_repository.gd
-res://src/ui/admin/AdminProfiles.gd
-res://src/scenes/admin/AdminHub.tscn
-res://src/ui/admin/AdminHub.gd
-res://src/scenes/profile/ProfileScene.tscn
-res://src/ui/profile/ProfileScene.gd

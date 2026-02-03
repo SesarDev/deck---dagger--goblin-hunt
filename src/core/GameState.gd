@@ -26,6 +26,13 @@ var cleared: Dictionary = {}           # "col-row" -> bool
 # Boss
 var boss_enemy_id: int = -1
 
+# =====================================================
+# PERFIL ACTIVO
+# =====================================================
+var user_id: int = -1
+var username: String = ""
+var user_role: String = "PLAYER"
+
 
 func new_run(seed: int, columns: int) -> void:
 	run_active = true
@@ -130,3 +137,8 @@ func load_from_disk() -> bool:
 		return false
 
 	return run_active
+
+func set_active_user(id_usuario: int, nombre: String, rol: String) -> void:
+	user_id = id_usuario
+	username = nombre
+	user_role = rol.to_upper()

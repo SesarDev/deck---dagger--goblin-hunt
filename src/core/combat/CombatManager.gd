@@ -18,7 +18,7 @@ func start_combat(enemy_id: int = -1) -> void:
 	player.deck.clear()
 	player.hand.clear()
 	player.discard.clear()
-	
+
 	# -----------------------------
 	# 1) Cargar enemigo
 	# -----------------------------
@@ -39,7 +39,10 @@ func start_combat(enemy_id: int = -1) -> void:
 	if run_id <= 0:
 		push_error("CombatManager: run_id inválido (%d)" % run_id)
 		return
-	print("[COMBAT] count run_deck_card =", Database.query("SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % run_id))
+
+	print("[COMBAT] count run_deck_card =", Database.query(
+		"SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % run_id
+	))
 
 	# 2.1) Traer IDs del mazo de la run
 	var id_rows: Array = Database.query("""
@@ -57,7 +60,9 @@ func start_combat(enemy_id: int = -1) -> void:
 		if card_id <= 0:
 			continue
 
-		var crows: Array = Database.query("SELECT * FROM carta WHERE id_carta = %d LIMIT 1;" % card_id)
+		var crows: Array = Database.query(
+			"SELECT * FROM carta WHERE id_carta = %d LIMIT 1;" % card_id
+		)
 		if not crows.is_empty():
 			player.deck.append(crows[0])
 
@@ -77,7 +82,6 @@ func start_combat(enemy_id: int = -1) -> void:
 	start_player_turn()
 	state_changed.emit()
 
-	
 
 # ==================================================
 # ENEMIGOS SEGÚN NODO DEL MAPA
@@ -140,7 +144,7 @@ func play_card(hand_index: int) -> void:
 	player.energy -= cost
 	_apply_card_effect(c)
 
-	var played : Dictionary = player.hand.pop_at(hand_index)
+	var played: Dictionary = player.hand.pop_at(hand_index)
 	player.discard.append(played)
 
 	_check_end_conditions()
@@ -218,18 +222,20 @@ func _shuffle(arr: Array) -> void:
 # ==================================================
 func _check_end_conditions() -> void:
 	if enemy.hp <= 0:
-		_on_victory()
-		var damage_taken := maxi(0, _player_hp_at_start - player.hp)
-		achievement_service.on_combat_ended(1, true, enemy.tipo, damage_taken)
-		combat_ended.emit(true, enemy.recompensa_xp, enemy.name)
+		_handle_victory()
 	elif player.hp <= 0:
-		combat_ended.emit(false, 0, enemy.name)
+		_handle_defeat()
 
 
-func _on_victory() -> void:
-	var user_id := 1
-	var xp_gained := enemy.recompensa_xp
+func _handle_victory() -> void:
+	var user_id := int(GameState.user_id)
+	if user_id <= 0:
+		push_error("CombatManager: user_id inválido. Selecciona un perfil antes de combatir.")
+		return
 
+	var xp_gained := int(enemy.recompensa_xp)
+
+	# 1) XP + timestamp
 	Database.execute("""
 		UPDATE progreso_usuario
 		SET experiencia = experiencia + %d,
@@ -237,7 +243,28 @@ func _on_victory() -> void:
 		WHERE id_usuario = %d;
 	""" % [xp_gained, user_id])
 
+	# 2) Nivel y desbloqueos
 	_check_level_up(user_id)
+
+	# 3) Victoria (y limpiar run activa)
+	Database.add_win(user_id)
+
+	# 4) Achievements (mantengo tu lógica)
+	var damage_taken := maxi(0, _player_hp_at_start - player.hp)
+	achievement_service.on_combat_ended(1, true, enemy.tipo, damage_taken)
+
+	# 5) Señal para UI
+	combat_ended.emit(true, xp_gained, enemy.name)
+
+
+func _handle_defeat() -> void:
+	var user_id := int(GameState.user_id)
+	if user_id > 0:
+		# derrota (y limpiar run activa)
+		Database.add_loss(user_id)
+
+	# (si quieres achievements de derrota, lo añadimos luego)
+	combat_ended.emit(false, 0, enemy.name)
 
 
 func _check_level_up(user_id: int) -> void:

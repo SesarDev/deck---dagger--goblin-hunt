@@ -4,9 +4,6 @@ var db: SQLite
 var db_path := "user://deck_and_dagger_v1.db"
 var is_open := false
 
-# Plantilla opcional dentro del proyecto (solo lectura en export).
-# Crea este archivo copiando tu DB actual cuando quieras “consolidar” datos:
-# user://deck_and_dagger_v1.db  ->  res://data/db/deck_and_dagger_v1.db
 const DB_RES_TEMPLATE := "res://data/db/deck_and_dagger_v1.db"
 
 
@@ -14,6 +11,11 @@ func _ready() -> void:
 	_initialize_database()
 	ensure_schema_applied()
 	ensure_seed_applied()
+
+	# ✅ Asegurar columnas nuevas y filas de progreso
+	ensure_profile_stats_columns()
+	ensure_progress_rows_for_all_users()
+
 	apply_migrations()
 	ensure_starter_deck_seeded()
 
@@ -30,11 +32,9 @@ func _initialize_database() -> void:
 
 
 func _ensure_user_db_exists() -> void:
-	# Si ya existe la DB en user:// no hacemos nada
 	if FileAccess.file_exists(db_path):
 		return
 
-	# Si existe una plantilla en res:// la copiamos a user://
 	if FileAccess.file_exists(DB_RES_TEMPLATE):
 		print("[DB] No existe DB en user://. Copiando plantilla desde: ", DB_RES_TEMPLATE)
 
@@ -54,12 +54,10 @@ func _ensure_user_db_exists() -> void:
 		dst.close()
 		return
 
-	# Si no hay plantilla, se creará vacía y luego tu pipeline aplicará schema/seed
 	print("[DB] No existe DB en user:// y no hay plantilla. Se creará vacía y se aplicará schema/seed.")
 
 
 func ensure_schema_applied() -> void:
-	# Si ya existe la tabla 'usuario', asumimos schema aplicado
 	var rows := query("SELECT name FROM sqlite_master WHERE type='table' AND name='usuario';")
 	if rows.size() > 0:
 		print("[DB] Schema ya aplicado.")
@@ -71,7 +69,6 @@ func ensure_schema_applied() -> void:
 
 
 func ensure_seed_applied() -> void:
-	# Si ya hay cartas, asumimos seed aplicado
 	var rows := query("SELECT COUNT(*) AS n FROM carta;")
 	if rows.size() > 0 and int(rows[0].get("n", 0)) > 0:
 		print("[DB] Seed ya aplicado.")
@@ -91,7 +88,6 @@ func apply_sql_file(file_path: String) -> void:
 	var sql_text := f.get_as_text()
 	f.close()
 
-	# Divide por ';' (suficiente para nuestro schema)
 	var statements := sql_text.split(";", false)
 	for s in statements:
 		var stmt := s.strip_edges()
@@ -109,19 +105,14 @@ func execute(sql: String) -> void:
 		print("[DB][ERR] ", db.error_message, " | SQL: ", sql)
 
 
-
-
 func query(sql: String) -> Array:
-
 	if not is_open:
 		push_error("[DB] query(): BD no abierta")
 		return []
 	db.query(sql)
 	if db.error_message != "" and db.error_message != "not an error":
 		print("[DB][ERR] ", db.error_message, " | SQL: ", sql)
-
 	return db.query_result
-
 
 
 func close() -> void:
@@ -131,30 +122,16 @@ func close() -> void:
 
 
 func apply_migrations() -> void:
-	# 1) Asegurar tabla de migraciones
 	apply_sql_file("res://data/db/migrations/000_schema_migrations.sql")
 
-	# 2) Lista de migraciones (ordenadas)
 	var migrations := [
-		 
-		#"res://data/db/migrations/001_carta_desbloqueo.sql",
-		#"res://data/db/migrations/002_seed_unlock_rules.sql",
-		#"res://data/db/migrations/003_reseed_cards_and_achievements.sql",
-		#"res://data/db/migrations/004_add_enemy_type.sql",
-		#"res://data/db/migrations/005_add_enemy_imagen.sql",
-		#"res://data/db/migrations/006_add_card_imagen.sql",
-		#"res://data/db/migrations/007_run_and_starter_deck.sql",
-		#"res://data/db/migrations/008_seed_starter_deck.sql",
-		#"res://data/db/migrations/009_fix_seed_starter_deck.sql",
-
+		# aquí tus migraciones si las reactivas
 	]
 
 	for path in migrations:
 		var name: String = path.get_file()
-
 		if _migration_applied(name):
 			continue
-
 		print("[DB] Aplicando migración:", name)
 		apply_sql_file(path)
 		execute("INSERT OR IGNORE INTO schema_migrations(name) VALUES ('%s');" % _escape_sql(name))
@@ -171,40 +148,38 @@ func _migration_applied(name: String) -> bool:
 # =====================================================
 
 func create_run() -> int:
-	print("[RUN] starter_deck rows:", query("SELECT * FROM starter_deck;"))
-
-	var run_id := get_last_insert_id()
-	print("[RUN] run_id:", run_id)
-
-	_populate_starter_deck(run_id)
-
-	print("[RUN] run_deck_card count:", query("SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % run_id))
-
 	var seed := randi()
 	execute("""
-		INSERT INTO run (seed, gold, hp, max_hp)
-		VALUES (%d, 50, 100, 100);
+		INSERT INTO run (seed, floor, gold, hp, max_hp)
+		VALUES (%d, 1, 50, 100, 100);
 	""" % seed)
 
-	_populate_starter_deck(run_id)
-	return run_id
-	var r := query("SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % run_id)
+	var new_run_id := get_last_insert_id()
+	print("[RUN] new_run_id:", new_run_id)
 
+	if new_run_id <= 0:
+		push_error("[RUN] create_run(): no se pudo obtener run_id")
+		return -1
+
+	_populate_starter_deck(new_run_id)
+
+	print("[RUN] run_deck_card count:",
+		query("SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % new_run_id)
+	)
+
+	return new_run_id
 
 
 func _populate_starter_deck(run_id: int) -> void:
-	# Si ya hay cartas para esta run, NO volver a poblar
 	var already: Array = query("SELECT COUNT(*) AS n FROM run_deck_card WHERE run_id=%d;" % run_id)
 	if already.size() > 0 and int(already[0].get("n", 0)) > 0:
 		print("[RUN] run_deck_card ya poblado para run_id=", run_id, " -> skip")
 		return
 
 	var rows: Array = query("SELECT card_id, copies FROM starter_deck;")
-
 	for row in rows:
 		var card_id: int = int((row as Dictionary).get("card_id", 0))
 		var copies: int = int((row as Dictionary).get("copies", 0))
-
 		for _i in range(copies):
 			execute("INSERT INTO run_deck_card (run_id, card_id) VALUES (%d, %d);" % [run_id, card_id])
 
@@ -218,9 +193,67 @@ func ensure_starter_deck_seeded() -> void:
 	execute("INSERT INTO starter_deck(card_id, copies) VALUES (1, 5);")
 	execute("INSERT INTO starter_deck(card_id, copies) VALUES (4, 4);")
 	execute("INSERT INTO starter_deck(card_id, copies) VALUES (6, 1);")
-
 	print("[DB] starter_deck sembrado por código.")
 
+
+# =====================================================
+#  PERFIL: columnas + filas de progreso
+# =====================================================
+
+func ensure_profile_stats_columns() -> void:
+	_ensure_column("progreso_usuario", "victorias", "INTEGER NOT NULL DEFAULT 0")
+	_ensure_column("progreso_usuario", "derrotas", "INTEGER NOT NULL DEFAULT 0")
+	_ensure_column("progreso_usuario", "run_id_activa", "INTEGER")
+
+
+func _ensure_column(table_name: String, column_name: String, column_def: String) -> void:
+	var cols := query("PRAGMA table_info(%s);" % table_name)
+	for c in cols:
+		if String((c as Dictionary).get("name", "")) == column_name:
+			return
+	print("[DB] Añadiendo columna %s.%s..." % [table_name, column_name])
+	execute("ALTER TABLE %s ADD COLUMN %s %s;" % [table_name, column_name, column_def])
+
+
+func ensure_progress_rows_for_all_users() -> void:
+	execute("""
+		INSERT OR IGNORE INTO progreso_usuario
+		(id_usuario, nivel, experiencia, fecha_ultima_partida, victorias, derrotas, run_id_activa)
+		SELECT id_usuario, 1, 0, NULL, 0, 0, NULL
+		FROM usuario;
+	""")
+
+
+# =====================================================
+#  STATS API (para que el perfil pueda mostrarlos)
+# =====================================================
+
+func add_win(user_id: int) -> void:
+	if user_id <= 0: return
+	execute("""
+		UPDATE progreso_usuario
+		SET victorias = COALESCE(victorias,0) + 1,
+		    fecha_ultima_partida = CURRENT_TIMESTAMP
+		WHERE id_usuario = %d;
+	""" % user_id)
+
+func add_loss(user_id: int) -> void:
+	if user_id <= 0: return
+	execute("""
+		UPDATE progreso_usuario
+		SET derrotas = COALESCE(derrotas,0) + 1,
+		    fecha_ultima_partida = CURRENT_TIMESTAMP
+		WHERE id_usuario = %d;
+	""" % user_id)
+
+func set_active_run_for_user(user_id: int, run_id: int) -> void:
+	if user_id <= 0: return
+	execute("""
+		UPDATE progreso_usuario
+		SET run_id_activa = %d,
+		    fecha_ultima_partida = CURRENT_TIMESTAMP
+		WHERE id_usuario = %d;
+	""" % [run_id, user_id])
 
 
 # =====================================================
@@ -232,7 +265,6 @@ func get_last_insert_id() -> int:
 	if rows.size() > 0:
 		return int(rows[0]["id"])
 	return -1
-
 
 func _escape_sql(s: String) -> String:
 	return s.replace("'", "''")
